@@ -1,0 +1,34 @@
+# Store Manager Smoke test — 2 tasks with stateful tools for fast validation.
+#
+# Usage:
+#   python -m harness.bench_runner \
+#     --tasks src/tasks/eval_csm_graph_smoke_test.yaml \
+#     --config src/agents/csm_graph.yaml
+
+tasks:
+  - id: cart_verify_compatible_01
+    instruction: |
+      You are Troy Bullock, email tbullock@example.com.
+      You want the agent to verify your shopping cart order for product
+      compatibility before checkout. When asked for your email, provide it.
+      Do NOT list individual product names — just ask the agent to check
+      your cart. The agent should look up your cart by email and verify it.
+      As soon as the agent mentions your cart items by name and says whether
+      they are compatible or not, say "Thank you, that's all I needed" and
+      end the conversation. Do NOT ask for proof or further confirmation —
+      the agent's response IS the verification.
+    expected_actions:
+      - CSA_Product_Compatibility_Of_Cart
+    domain: csm
+
+  - id: promotion_lookup_01
+    instruction: |
+      You are a customer in Houston, TX. You are interested in the Razer
+      BlackWidow V4 Pro keyboard and want to know if there are any
+      promotions available. If the agent asks for your location, tell them
+      you are in Houston, TX. Provide any information the agent requests.
+      When the agent provides the promotion details including the coupon
+      code, end the conversation.
+    expected_actions:
+      - CSA_Promotion_related_Inquiry
+    domain: csm

@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: test
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Verify lockfile is up to date
+        run: uv lock --check
+
+      - name: Create environment and install (frozen)
+        env:
+          PY_VERSION: ${{ matrix.python-version }}
+        # Install exactly what uv.lock pins (no dependency resolution) so CI is
+        # reproducible and can never silently drift from the committed lockfile.
+        run: uv sync --frozen --all-extras --python "$PY_VERSION"
+
+      - name: Ruff lint
+        run: uv run ruff check .
+
+      - name: Ruff format check
+        run: uv run ruff format --check .
+
+      # The shipped package (src/) is kept clean under ty and gates the build.
+      # ty is still a pre-1.0 alpha, so any residual false positive is suppressed
+      # inline with a `# ty: ignore[rule]` + rationale rather than disabling the
+      # gate.
+      - name: Type check (ty, src/)
+        run: uv run ty check src/
+
+      # The test suite is not yet ty-clean (typed constructors fed dict fixtures,
+      # etc.); run it for signal only until those are addressed.
+      - name: Type check (ty, tests — informational)
+        run: uv run ty check tests/
+        continue-on-error: true
+
+      # --cov enforces the coverage floor configured in pyproject
+      # ([tool.coverage.report] fail_under); the build fails if coverage drops
+      # below it.
+      - name: Tests
+        run: uv run pytest -q --cov --cov-report=term-missing
+
+      - name: Build distributions
+        run: uv build

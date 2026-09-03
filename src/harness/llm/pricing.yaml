@@ -1,0 +1,346 @@
+# Per-model pricing table for the "token cost per completed task" feature.
+#
+# Prices are USD per 1,000,000 tokens. Sourced from public provider pricing pages
+# where available (OpenAI, Anthropic, Google). OpenAI GPT-5.5 / 5.6-luna / 5.6-terra
+# were verified against developers.openai.com/api/docs/pricing on 2026-07-20.
+# Prices for research or early-access builds without a published rate card are
+# best-effort estimates based on the closest public equivalent — these are
+# flagged with "# TODO verify price" and should be confirmed by a human with
+# access to actual billing/rate-card data before this feature is used for real
+# cost reporting.
+#
+# cache_read / cache_write may be null when a provider has no separate cache
+# tier (or none is publicly documented) — see pricing.py `cost_usd()` for how
+# null/missing cache prices are handled (null -> $0 contribution; present cache
+# tokens with no defined price -> fall back to charging at `input` price).
+#
+# Loaded/parsed by pricing.py::load_pricing(). Bump `version` on any breaking
+# restructure of this file (key renames, etc.) so callers can detect drift.
+version: 1
+
+models:
+  # --- OpenAI family -------------------------------------------------------
+  gpt-4.1:
+    input: 2.00
+    output: 8.00
+    cache_read: 0.50
+    cache_write: null
+    effective_date: "2026-01-01"
+    aliases:
+      - "gpt-4.1"
+      - "openai/gpt-4.1"
+      # Match dated/preview deployment ids, e.g. "gpt-4.1-2026-04-14-preview".
+      - "regex:^gpt-4\\.1[-.].*$"
+
+  gpt-4o:
+    input: 2.50
+    output: 10.00
+    cache_read: 1.25
+    cache_write: null
+    effective_date: "2026-01-01"
+    aliases:
+      - "gpt-4o"
+      - "openai/gpt-4o"
+
+  gpt-5-mini:
+    # User-simulator default model (USER_LLM_MODEL). Included so user-sim
+    # cost can be priced too, even though headline agent cost excludes it.
+    input: 0.25  # TODO verify price
+    output: 2.00  # TODO verify price
+    cache_read: 0.025  # TODO verify price
+    cache_write: null
+    effective_date: "2026-01-01"
+    aliases:
+      - "gpt-5-mini"
+      - "openai/gpt-5-mini"
+
+  gpt-5.5:
+    # Verified from OpenAI public pricing page (developers.openai.com/api/docs/pricing), 2026-07-20.
+    input: 5.00
+    output: 30.00
+    cache_read: 0.50
+    cache_write: null
+    effective_date: "2026-07-20"
+    aliases:
+      - "gpt-5.5"
+      - "openai/gpt-5.5"
+      - "GPT-5.5"
+
+  gpt-5.6-luna:
+    # GPT-5.6 "Luna".
+    # Verified from OpenAI public pricing page (developers.openai.com/api/docs/pricing), 2026-07-20.
+    input: 1.00
+    output: 6.00
+    cache_read: 0.10
+    cache_write: null
+    effective_date: "2026-07-20"
+    aliases:
+      - "gpt56luna"
+      - "gpt-5.6-luna"
+
+  gpt-5.6-terra:
+    # GPT-5.6 "Terra" — the Format-3 usage-shape example from the design doc.
+    # Verified from OpenAI public pricing page (developers.openai.com/api/docs/pricing), 2026-07-20.
+    input: 2.50
+    output: 15.00
+    cache_read: 0.25
+    cache_write: null
+    effective_date: "2026-07-20"
+    aliases:
+      - "gpt-5.6-terra"
+      - "gpt56terra"
+
+  # --- Anthropic family (direct + Bedrock via LLM Gateway) ------------------
+  # Sonnet 4 / 4.5 / 4.6 all $3/$15 in/out. Verified from Anthropic public pricing
+  # (platform.claude.com/docs/en/about-claude/pricing), 2026-07-20.
+  claude-sonnet-4:
+    input: 3.00
+    output: 15.00
+    cache_read: 0.30
+    cache_write: 3.75
+    effective_date: "2026-07-20"
+    aliases:
+      - "sonnet4"
+      - "Sonnet 4"
+      - "claude-sonnet-4-20250514"
+      - "anthropic/claude-sonnet-4-20250514"
+
+  claude-sonnet-4.6:
+    input: 3.00
+    output: 15.00
+    cache_read: 0.30
+    cache_write: 3.75
+    effective_date: "2026-07-20"
+    aliases:
+      - "sonnet46"
+      - "Claude 4.6 Sonnet"
+      - "claude-sonnet-4-6"
+
+  claude-sonnet-5:
+    # Verified from Anthropic public pricing (platform.claude.com/docs/en/about-claude/pricing),
+    # 2026-07-20. INTRODUCTORY pricing $2/$10 in effect through 2026-08-31; standard
+    # pricing rises to $3/$15 (cache_read 0.30, 5m cache_write 3.75) on 2026-09-01.
+    input: 2.00
+    output: 10.00
+    cache_read: 0.20
+    cache_write: 2.50  # 5-minute cache write (1.25x input)
+    effective_date: "2026-07-20"
+    aliases:
+      - "sonnet5"
+
+  claude-haiku-4.5:
+    input: 1.00
+    output: 5.00
+    cache_read: 0.10
+    cache_write: 1.25
+    effective_date: "2026-01-01"
+    aliases:
+      - "haiku45"
+      - "Haiku 4.5"
+
+  # Opus 4.5/4.6/4.7/4.8 all share $5/$25 input/output (the older $15/$75 was
+  # Opus 4.1 and earlier). Verified from Anthropic public pricing
+  # (platform.claude.com/docs/en/about-claude/pricing), 2026-07-20.
+  # cache_read = 0.1x input; cache_write = 5-minute write (1.25x input).
+  claude-opus-4.6:
+    input: 5.00
+    output: 25.00
+    cache_read: 0.50
+    cache_write: 6.25
+    effective_date: "2026-07-20"
+    aliases:
+      - "opus46"
+
+  claude-opus-4.7:
+    input: 5.00
+    output: 25.00
+    cache_read: 0.50
+    cache_write: 6.25
+    effective_date: "2026-07-20"
+    aliases:
+      - "opus47"
+
+  claude-opus-4.8:
+    input: 5.00
+    output: 25.00
+    cache_read: 0.50
+    cache_write: 6.25
+    effective_date: "2026-07-20"
+    aliases:
+      - "opus48"
+      - "Claude Opus 4.8"
+
+  # --- Google / Gemini family ------------------------------------------------
+  gemini-3-flash:
+    # TODO verify price — not on the public pricing page (2026-07-20); only
+    # 3.1 Flash-Lite, 3.1 Pro, and 3.5 Flash are listed. Estimated from the
+    # verified 3.5 Flash tier ($1.50/$9.00) as the closest Flash rate card.
+    input: 1.50  # TODO verify price
+    output: 9.00  # TODO verify price
+    cache_read: 0.15  # TODO verify price
+    cache_write: null
+    effective_date: "2026-07-20"
+    aliases:
+      - "gemini3flash"
+      - "Gemini 3 Flash"
+      - "vertex_ai/gemini-3-flash-preview"
+
+  gemini-3.1-flash-lite:
+    # Verified from Google public pricing (ai.google.dev/gemini-api/docs/pricing),
+    # 2026-07-20. Text/image/video tier (audio input is higher at $0.50).
+    input: 0.25
+    output: 1.50
+    cache_read: 0.025
+    cache_write: null
+    effective_date: "2026-07-20"
+    aliases:
+      - "gemini31flite"
+      - "Gemini 3.1 Lite"
+      - "vertex_ai/gemini-3.1-flash-lite-preview"
+
+  gemini-3.1-pro:
+    # Verified from Google public pricing (ai.google.dev/gemini-api/docs/pricing),
+    # 2026-07-20. Standard (<=200k-token prompt) tier; long-context (>200k) is
+    # $4/$18 in/out with $0.40 cache-read.
+    input: 2.00
+    output: 12.00
+    cache_read: 0.20
+    cache_write: null
+    effective_date: "2026-07-20"
+    aliases:
+      - "gemini31pro"
+      - "Gemini 3.1 Pro"
+      - "vertex_ai/gemini-3.1-pro"
+
+  gemini-3.2-flash:
+    # TODO verify price — not individually listed on the public page (2026-07-20).
+    # Estimated from the verified 3.5 Flash tier ($1.50/$9.00).
+    input: 1.50  # TODO verify price
+    output: 9.00  # TODO verify price
+    cache_read: 0.15  # TODO verify price
+    cache_write: null
+    effective_date: "2026-07-20"
+    aliases:
+      - "gemini32flash"
+      - "Gemini 3.2 Flash"
+
+  gemini-3.5-flash:
+    # Verified from Google public pricing (ai.google.dev/gemini-api/docs/pricing),
+    # 2026-07-20. Text/image/video tier.
+    input: 1.50
+    output: 9.00
+    cache_read: 0.15
+    cache_write: null
+    effective_date: "2026-07-20"
+    aliases:
+      - "gemini35flash"
+
+  gemini-3.6-flash:
+    # Verified from Google public pricing (ai.google.dev/gemini-api/docs/pricing),
+    # 2026-07-22. Standard (non-batch) text/image/video tier. Output ($7.50) is
+    # cheaper than 3.5 Flash ($9.00); input and cache-read match 3.5 Flash.
+    input: 1.50
+    output: 7.50
+    cache_read: 0.15
+    cache_write: null
+    effective_date: "2026-07-22"
+    aliases:
+      - "gemini36flash"
+      - "vertex_ai/gemini-3.6-flash"
+
+  gemini-3.7-flash:
+    # Verified from Google public pricing (ai.google.dev/gemini-api/docs/pricing),
+    # 2026-08-17. Standard (non-batch) text/image/video tier. Using the current
+    # promotional rate in effect through 2026-12-31 ($0.75 in / $3.75 out /
+    # $0.075 cache-read); this doubles to $1.50 / $7.50 / $0.15 on 2027-01-01.
+    input: 0.75
+    output: 3.75
+    cache_read: 0.075
+    cache_write: null
+    effective_date: "2026-08-17"
+    aliases:
+      - "gemini37flash"
+      - "vertex_ai/gemini-3.7-flash"
+
+  gemini-flash-early-exp2:
+    # Pre-release/experimental Gemini Flash build accessed via LiteLLM+Vertex.
+    # No public rate card; priced from the verified 3.5 Flash tier ($1.50/$9.00).
+    input: 1.50  # TODO verify price — experimental build, no public rate card
+    output: 9.00  # TODO verify price
+    cache_read: 0.15  # TODO verify price
+    cache_write: null
+    effective_date: "2026-07-20"
+    aliases:
+      - "geminifeexp2"
+      - "vertex_ai/gemini-flash-early-exp2"
+
+  gemini-flash-early-exp:
+    # Pre-release/experimental Gemini Flash build ("Skimaki") accessed via
+    # LiteLLM+Vertex. No public rate card; priced to match Gemini 3.7 Flash
+    # (its closest production sibling) — the current promotional rate in effect
+    # through 2026-12-31 ($0.75 in / $3.75 out / $0.075 cache-read), doubling to
+    # $1.50 / $7.50 / $0.15 on 2027-01-01.
+    input: 0.75  # TODO verify price — experimental build, priced as Gemini 3.7 Flash
+    output: 3.75  # TODO verify price
+    cache_read: 0.075  # TODO verify price
+    cache_write: null
+    effective_date: "2026-09-01"
+    aliases:
+      - "geminifeexp"
+      - "skimaki"
+      - "vertex_ai/gemini-flash-early-exp"
+
+  # --- Gemma (open-weight, self/gateway-hosted) ------------------------------
+  gemma-3-4b-it:
+    # Small open-weight model; typically self-hosted/gateway-hosted rather than
+    # billed per-token by a public provider. Estimate based on comparable
+    # small-model hosting rate cards.
+    input: 0.05  # TODO verify price — open-weight model, no public per-token rate card
+    output: 0.10  # TODO verify price
+    cache_read: null
+    cache_write: null
+    effective_date: "2026-01-01"
+    aliases:
+      - "gemma431bit"
+
+  # --- Nemotron (NVIDIA, via Bedrock/LLM Gateway or hosted inference) --------
+  nemotron-3-super-120b:
+    input: 0.10  # TODO verify price — Bedrock custom-model pricing not public
+    output: 0.40  # TODO verify price
+    cache_read: null
+    cache_write: null
+    effective_date: "2026-01-01"
+    aliases:
+      - "nemotron3120b"
+      - "nemotron"
+      - "Nemotron 3 Super 120B"
+
+  nemotron-ultra-550b:
+    input: 0.20  # TODO verify price — no public rate card
+    output: 0.80  # TODO verify price
+    cache_read: null
+    cache_write: null
+    effective_date: "2026-01-01"
+    aliases:
+      - "nemotron_ultra"
+      - "Nemotron Ultra 550B"
+
+  # --- xAI (Grok, via AWS Bedrock) -------------------------------------------
+  grok-4.6:
+    # xAI Grok 4.6 accessed directly through AWS Bedrock (litellm bedrock/*).
+    # Prices are xAI's public grok-4.6 rate ($2 / $6 per 1M in/out, $0.50/1M
+    # cache-read) — Bedrock resells at the model provider's rate. Confirm against
+    # the AWS Bedrock rate card / actual billing before using for cost reporting.
+    input: 2.00
+    output: 6.00
+    cache_read: 0.50
+    cache_write: null
+    effective_date: "2026-01-01"
+    aliases:
+      - "grok-4.6"
+      - "grok4.6"
+      - "grok46"
+      - "xai/grok-4.6"
+      # Matches direct xai ids, the bedrock converse route
+      # (bedrock/converse/us.xai.grok-4.6), and regional-profile prefixes.
+      - "regex:^(bedrock/(converse/)?)?([a-z]{2,6}\\.)?xai[.-]grok-?4[.-]6.*$"

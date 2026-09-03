@@ -1,0 +1,561 @@
+# Field Service Agent Benchmark — 23 tasks with stateful tools.
+#
+# All tasks use domain: field_service so tools read/write shared state from
+# the laptop repair field service mock database.
+#
+# Usage:
+#   python -m harness.bench_runner \
+#     --tasks src/tasks/eval_field_service_graph.yaml \
+#     --config src/agents/field_service_graph.yaml
+#
+# Grading note: beyond expected_actions (tool *names*), tasks assert
+# expected_args, expected_order (subsequence), expected_response_contains
+# (substring or "re:" regex over assistant turns), expected_state, and
+# forbidden_state. The reschedule flows carry expected_order because their
+# multi-step ordering (identify -> unschedule -> get slots -> update -> schedule)
+# is the load-bearing behavior. Policy/refusal tasks reference
+# src/tasks/policies/field_service_policy.md.
+
+tasks:
+  # ── FAQ ─────────────────────────────────────────────────────────
+
+  - id: faq_walk_in_01
+    instruction: |
+      You are a customer. Ask the agent whether you need to book an
+      appointment or can walk in for service.
+      When the agent provides information about walk-in hours and
+      appointment recommendations, end the conversation.
+    expected_actions:
+      - FSA_Knowledge_FAQ
+    domain: field_service
+    difficulty: easy
+    # Walk-in FAQ states weekday hours 9 AM–6 PM; agent must convey real hours.
+    # Allow an optional ":00" / ":mm" between the hour and AM/PM (e.g. "9:00 AM").
+    expected_response_contains:
+      - "re:9(:\\d{2})?\\s*AM"
+      - "re:6(:\\d{2})?\\s*PM"
+
+  - id: faq_repair_time_01
+    instruction: |
+      You are a customer. Ask the agent how long a typical laptop
+      repair takes.
+      When the agent provides the repair timeline, end the conversation.
+    expected_actions:
+      - FSA_Knowledge_FAQ
+    domain: field_service
+    difficulty: easy
+    # KB answers give a "business days" repair window — agent must state it.
+    expected_response_contains:
+      - "re:business day"
+
+  - id: faq_weekend_hours_01
+    instruction: |
+      You are a customer. Ask the agent if they offer weekend or
+      after-hours service appointments.
+      When the agent confirms weekend availability details, end the
+      conversation.
+    expected_actions:
+      - FSA_Knowledge_FAQ
+    domain: field_service
+    difficulty: easy
+    # Weekend FAQ: Saturday slots 10 AM–2 PM.
+    expected_response_contains:
+      - "re:Saturday"
+
+  - id: faq_compatibility_01
+    instruction: |
+      You are a customer. Ask the agent if the Apple Magic Keyboard
+      is compatible with MacBook Air.
+      When the agent confirms compatibility, end the conversation.
+    expected_actions:
+      - FSA_Knowledge_FAQ
+    domain: field_service
+    difficulty: easy
+    # Magic Keyboard IS compatible (via Bluetooth) — agent must affirm. Accept
+    # the common affirmative paraphrase "works with" as well as the literal
+    # "compatible"/"compatibility"; any of these is a correct confirmation.
+    expected_response_contains:
+      - "re:compatib|works with"
+
+  - id: faq_magsafe_incompatible_01
+    instruction: |
+      You are a customer. Ask the agent if the Apple MagSafe Charger
+      is compatible with MacBook Air.
+      When the agent explains it is not compatible, end the conversation.
+    expected_actions:
+      - FSA_Knowledge_FAQ
+    domain: field_service
+    difficulty: easy
+    # MagSafe Charger is NOT compatible with MacBook Air (needs USB-C adapter).
+    # Tolerate any hyphen between "USB" and "C" — models commonly emit a
+    # typographic non-breaking hyphen ("USB‑C", U+2011) instead of ASCII "-".
+    expected_response_contains:
+      - "re:not compatible|USB.?C|isn't compatible|incompatible"
+
+  # ── Issue Identification & Troubleshooting ──────────────────────
+
+  - id: tech_troubleshoot_power_01
+    instruction: |
+      You are a technician. Your email is indranil.sengupta@example.com.
+      Provide your email upfront and ask for troubleshooting steps for
+      a laptop power failure issue.
+      When the agent provides structured troubleshooting steps covering
+      power supply verification and internal checks, end the conversation.
+    expected_actions:
+      - FSA_Identify_User_Type_Based_on_Email
+      - FSA_Technician_Get_Troubleshooting_Steps
+    domain: field_service
+    difficulty: medium
+    expected_order:
+      - FSA_Identify_User_Type_Based_on_Email
+      - FSA_Technician_Get_Troubleshooting_Steps
+    expected_args:
+      FSA_Identify_User_Type_Based_on_Email:
+        email: indranil.sengupta@example.com
+    # Power-failure guide is titled "Laptop Power Failure Troubleshooting".
+    expected_response_contains:
+      - "re:power"
+
+  - id: tech_troubleshoot_display_01
+    instruction: |
+      You are a technician. Your email is indranil.sengupta@example.com.
+      Provide your email and ask for steps to diagnose a laptop display
+      malfunction.
+      When the agent provides display troubleshooting steps, end the
+      conversation.
+    expected_actions:
+      - FSA_Identify_User_Type_Based_on_Email
+      - FSA_Technician_Get_Troubleshooting_Steps
+    domain: field_service
+    difficulty: medium
+    expected_order:
+      - FSA_Identify_User_Type_Based_on_Email
+      - FSA_Technician_Get_Troubleshooting_Steps
+    expected_args:
+      FSA_Identify_User_Type_Based_on_Email:
+        email: indranil.sengupta@example.com
+    expected_response_contains:
+      - "re:display|external monitor"
+
+  - id: tech_troubleshoot_bluetooth_01
+    instruction: |
+      You are a technician. Your email is indranil.sengupta@example.com.
+      Provide your email and ask for troubleshooting steps for a
+      Bluetooth issue on a laptop.
+      When the agent provides Bluetooth troubleshooting steps including
+      hardware verification and driver checks, end the conversation.
+    expected_actions:
+      - FSA_Identify_User_Type_Based_on_Email
+      - FSA_Technician_Get_Troubleshooting_Steps
+    domain: field_service
+    difficulty: medium
+    expected_order:
+      - FSA_Identify_User_Type_Based_on_Email
+      - FSA_Technician_Get_Troubleshooting_Steps
+    expected_args:
+      FSA_Identify_User_Type_Based_on_Email:
+        email: indranil.sengupta@example.com
+    expected_response_contains:
+      - "re:bluetooth"
+
+  - id: tech_troubleshoot_overheating_01
+    instruction: |
+      You are a technician. Your email is indranil.sengupta@example.com.
+      Provide your email and ask how to troubleshoot an overheating
+      processor.
+      When the agent provides cooling system and airflow troubleshooting
+      steps, end the conversation.
+    expected_actions:
+      - FSA_Identify_User_Type_Based_on_Email
+      - FSA_Technician_Get_Troubleshooting_Steps
+    domain: field_service
+    difficulty: medium
+    expected_order:
+      - FSA_Identify_User_Type_Based_on_Email
+      - FSA_Technician_Get_Troubleshooting_Steps
+    expected_args:
+      FSA_Identify_User_Type_Based_on_Email:
+        email: indranil.sengupta@example.com
+    expected_response_contains:
+      - "re:cooling|fan|thermal|airflow|overheat"
+
+  - id: tech_troubleshoot_charging_01
+    instruction: |
+      You are a technician. Your email is indranil.sengupta@example.com.
+      Provide your email and ask for help troubleshooting a laptop
+      charging issue.
+      When the agent provides charging circuit and battery diagnostic
+      steps, end the conversation.
+    expected_actions:
+      - FSA_Identify_User_Type_Based_on_Email
+      - FSA_Technician_Get_Troubleshooting_Steps
+    domain: field_service
+    difficulty: medium
+    expected_order:
+      - FSA_Identify_User_Type_Based_on_Email
+      - FSA_Technician_Get_Troubleshooting_Steps
+    expected_args:
+      FSA_Identify_User_Type_Based_on_Email:
+        email: indranil.sengupta@example.com
+    expected_response_contains:
+      - "re:charging|battery|charger"
+
+  # ── Schedule Management ─────────────────────────────────────────
+
+  - id: schedule_reschedule_no_appt_num_01
+    instruction: |
+      You are Robert Janzen, email rjanzen@example.com.
+      You want to reschedule your repair appointment for tomorrow at
+      11 AM. Provide your email when asked.
+      Do NOT provide an appointment number initially — wait for the
+      agent to list your appointments and ask you to select one.
+      When the agent lists your appointments, say "Thank you" and
+      end the conversation.
+    expected_actions:
+      - FSA_Identify_User_Type_Based_on_Email
+      - FSA_Get_Appointment_details_based_on_User_Input
+    domain: field_service
+    difficulty: medium
+    expected_order:
+      - FSA_Identify_User_Type_Based_on_Email
+      - FSA_Get_Appointment_details_based_on_User_Input
+    expected_args:
+      FSA_Identify_User_Type_Based_on_Email:
+        email: rjanzen@example.com
+      FSA_Get_Appointment_details_based_on_User_Input:
+        email: rjanzen@example.com
+    # Agent lists Robert's appointments; at least one of his real ones appears.
+    expected_response_contains:
+      - "re:SA-0409|SA-0412|SA-0414|SA-0425"
+
+  - id: schedule_reschedule_full_flow_01
+    instruction: |
+      You are Robert Janzen, email rjanzen@example.com.
+      You want to reschedule appointment SA-0412 to 3 PM tomorrow.
+      Provide your email and appointment number upfront.
+      When the agent confirms the appointment has been rescheduled,
+      end the conversation.
+    expected_actions:
+      - FSA_Identify_User_Type_Based_on_Email
+      - FSA_Unschedule_Appointment
+      - FSA_Get_Available_Slots_Based_on_Appointment_Number
+      - FSA_Update_Arrival_Windows
+      - FSA_Schedule_Appointment
+    domain: field_service
+    difficulty: hard
+    # The full 5-step reschedule flow; ordering is the load-bearing behavior.
+    expected_order:
+      - FSA_Identify_User_Type_Based_on_Email
+      - FSA_Unschedule_Appointment
+      - FSA_Get_Available_Slots_Based_on_Appointment_Number
+      - FSA_Update_Arrival_Windows
+      - FSA_Schedule_Appointment
+    expected_args:
+      FSA_Identify_User_Type_Based_on_Email:
+        email: rjanzen@example.com
+      FSA_Unschedule_Appointment:
+        appointment_number: SA-0412
+      FSA_Schedule_Appointment:
+        appointment_number: SA-0412
+    expected_state:
+      service_appointments:
+        SA-0412:
+          status: "Scheduled"
+      scheduling_actions:
+        _min_length: 3
+    # Must not touch Robert's other appointments while rescheduling SA-0412.
+    forbidden_state:
+      service_appointments:
+        SA-0414:
+          status: "Unscheduled"
+
+  - id: schedule_show_available_slots_01
+    instruction: |
+      You are Robert Janzen, email rjanzen@example.com.
+      You want to reschedule appointment SA-0414 to tomorrow.
+      Provide your email and appointment number upfront.
+      When the agent shows available time slots for tomorrow,
+      end the conversation by saying "I'll think about it, thanks."
+    expected_actions:
+      - FSA_Identify_User_Type_Based_on_Email
+      - FSA_Unschedule_Appointment
+      - FSA_Get_Available_Slots_Based_on_Appointment_Number
+    domain: field_service
+    difficulty: hard
+    expected_order:
+      - FSA_Identify_User_Type_Based_on_Email
+      - FSA_Unschedule_Appointment
+      - FSA_Get_Available_Slots_Based_on_Appointment_Number
+    expected_args:
+      FSA_Identify_User_Type_Based_on_Email:
+        email: rjanzen@example.com
+      FSA_Unschedule_Appointment:
+        appointment_number: SA-0414
+      FSA_Get_Available_Slots_Based_on_Appointment_Number:
+        appointment_number: SA-0414
+    expected_state:
+      service_appointments:
+        SA-0414:
+          status: "Unscheduled"
+    # Agent should surface at least one real slot from the availability list.
+    expected_response_contains:
+      - "re:09:00|10:00|11:00|13:00|14:00|15:00"
+
+  - id: schedule_outside_hours_01
+    instruction: |
+      You are Gabe Hoskins, email ghoskins@example.com.
+      You want to reschedule your appointment SA-0406 to 8 PM today.
+      Provide your email and appointment number upfront.
+      When the agent informs you that 8 PM is outside service hours
+      and asks for a different time, end the conversation.
+    expected_actions: []
+    domain: field_service
+    difficulty: medium
+    # 8 PM is past the 6 PM (18:00) service-hours cutoff; agent must decline
+    # and must NOT have unscheduled the appointment.
+    expected_response_contains:
+      - "re:outside|service hours|not available|6\\s*PM|business hours"
+    forbidden_state:
+      service_appointments:
+        SA-0406:
+          status: "Unscheduled"
+
+  - id: schedule_outside_hours_weekend_01
+    instruction: |
+      You are Gabe Hoskins, email ghoskins@example.com.
+      You want to shift your appointment SA-0406 to Saturday at 10 AM.
+      Provide your email and appointment number upfront.
+      When the agent informs you that Saturday is outside service hours,
+      end the conversation.
+    expected_actions: []
+    domain: field_service
+    difficulty: medium
+    # Reschedule service hours are weekdays only; Saturday must be refused and
+    # the appointment must remain Scheduled.
+    expected_response_contains:
+      - "re:Saturday|weekend|outside|service hours|Monday"
+    forbidden_state:
+      service_appointments:
+        SA-0406:
+          status: "Unscheduled"
+
+  # ── Service Overview (Pre-Work Brief) ───────────────────────────
+
+  - id: service_overview_prework_01
+    instruction: |
+      You are a technician. Your email is indranil.sengupta@example.com.
+      Ask for the details of service appointment SA-0223.
+      Provide your email and appointment number upfront.
+      When the agent provides the work order details, service notes,
+      and checklist, end the conversation.
+    expected_actions:
+      - FSA_Identify_User_Type_Based_on_Email
+      - FSA_Get_Pre_Work_Brief_for_Technician
+    domain: field_service
+    difficulty: medium
+    expected_order:
+      - FSA_Identify_User_Type_Based_on_Email
+      - FSA_Get_Pre_Work_Brief_for_Technician
+    expected_args:
+      FSA_Identify_User_Type_Based_on_Email:
+        email: indranil.sengupta@example.com
+      FSA_Get_Pre_Work_Brief_for_Technician:
+        appointment_number: SA-0223
+    # SA-0223 is a keyboard driver job; brief surfaces a keyboard checklist.
+    expected_response_contains:
+      - "re:keyboard"
+
+  - id: service_overview_customer_steps_01
+    instruction: |
+      You are a technician. Your email is indranil.sengupta@example.com.
+      Ask whether the customer tried any troubleshooting steps before
+      service appointment SA-0425 was raised.
+      Provide your email and appointment number upfront.
+      When the agent provides the troubleshooting steps already attempted
+      by the customer, end the conversation.
+    expected_actions:
+      - FSA_Identify_User_Type_Based_on_Email
+      - FSA_Get_Pre_Work_Brief_for_Technician
+    domain: field_service
+    difficulty: medium
+    expected_order:
+      - FSA_Identify_User_Type_Based_on_Email
+      - FSA_Get_Pre_Work_Brief_for_Technician
+    expected_args:
+      FSA_Identify_User_Type_Based_on_Email:
+        email: indranil.sengupta@example.com
+      FSA_Get_Pre_Work_Brief_for_Technician:
+        appointment_number: SA-0425
+    # SA-0425 description is a keyboard issue with prior steps tried.
+    expected_response_contains:
+      - "re:keyboard|driver|reconnect"
+
+  - id: service_overview_tools_needed_01
+    instruction: |
+      You are a technician. Your email is abel.reegan@example.com.
+      Ask if you need to bring any specialized tools for service
+      appointment SA-0385.
+      Provide your email and appointment number upfront.
+      When the agent provides checklist details including tools needed,
+      end the conversation.
+    expected_actions:
+      - FSA_Identify_User_Type_Based_on_Email
+      - FSA_Get_Pre_Work_Brief_for_Technician
+    domain: field_service
+    difficulty: medium
+    expected_order:
+      - FSA_Identify_User_Type_Based_on_Email
+      - FSA_Get_Pre_Work_Brief_for_Technician
+    expected_args:
+      FSA_Identify_User_Type_Based_on_Email:
+        email: abel.reegan@example.com
+      FSA_Get_Pre_Work_Brief_for_Technician:
+        appointment_number: SA-0385
+    # SA-0385 is an HP Envy 13 performance issue whose description also mentions
+    # "battery not charging", so the pre-work brief keys on power/charging first
+    # and returns the power_charging checklist (Multimeter, charger, "Tools &
+    # Equipment", battery health check). Regex below matches case-insensitively,
+    # so "tool|equipment" hit the "Necessary Tools & Equipment" line.
+    expected_response_contains:
+      - "re:RAM|SSD|tool|equipment"
+
+  # ── New Booking (Issue → Work Order → Schedule) ─────────────────
+
+  - id: new_booking_performance_01
+    instruction: |
+      You are Mina Passini, email mpassini@example.com.
+      You are facing a performance issue with your Asus VivoBook S15
+      laptop. You want to book an appointment at the earliest available
+      slot. Provide your email and laptop details upfront.
+      When the agent shows available slots or confirms a booking,
+      end the conversation.
+    expected_actions:
+      - FSA_Identify_User_Type_Based_on_Email
+      - Field_Service_Agent_Identify_the_issue
+      - Get_Warranty_Details_Field_Service_Agent
+      - Get_New_Work_Order_by_User_Input
+    domain: field_service
+    difficulty: hard
+    expected_order:
+      - FSA_Identify_User_Type_Based_on_Email
+      - Field_Service_Agent_Identify_the_issue
+      - Get_New_Work_Order_by_User_Input
+    expected_args:
+      FSA_Identify_User_Type_Based_on_Email:
+        email: mpassini@example.com
+      Field_Service_Agent_Identify_the_issue:
+        email: mpassini@example.com
+        asset_name: { _contains: "VivoBook" }
+    expected_state:
+      created_work_orders:
+        _min_length: 1
+
+  - id: new_booking_outside_hours_01
+    instruction: |
+      You are Deanna Collins, email dcollins@example.com.
+      You are facing an issue with your HP Envy 13 laptop.
+      You want to book an appointment at 9 PM.
+      Provide your email and issue upfront.
+      When the agent informs you that 9 PM is outside service hours,
+      end the conversation.
+    expected_actions: []
+    domain: field_service
+    difficulty: medium
+    # 9 PM is outside service hours; agent must decline. (No forbidden_state on
+    # created_work_orders: it defaults to an empty list, which the _not_null
+    # collateral check would falsely flag as populated.)
+    expected_response_contains:
+      - "re:outside|service hours|not available|6\\s*PM|business hours"
+
+  # ── Hard: discovery, ambiguity, policy/refusal ──────────────────
+  # These tasks deliberately withhold the appointment number, require asking
+  # for missing detail, or require refusing — to break intent→toolname
+  # matching and force real reasoning. Policy tasks are graded against
+  # src/tasks/policies/field_service_policy.md.
+
+  - id: discovery_reschedule_by_resource_01
+    instruction: |
+      You are Robert Janzen, email rjanzen@example.com.
+      You want to reschedule the appointment that is assigned to the
+      technician "James Clifton" to 3 PM tomorrow. You do NOT know its
+      appointment number — do not guess one. Provide only your email and
+      the technician's name; the agent must look up your appointments and
+      find the matching one itself.
+      When the agent confirms the appointment has been rescheduled,
+      end the conversation.
+    expected_actions:
+      - FSA_Identify_User_Type_Based_on_Email
+      - FSA_Get_Appointment_details_based_on_User_Input
+      - FSA_Unschedule_Appointment
+      - FSA_Schedule_Appointment
+    domain: field_service
+    difficulty: hard
+    # Robert's appointment with resource "James Clifton" is SA-0412. The agent
+    # must resolve name->appointment via the listing tool, then act on SA-0412.
+    # Correct resolved arg proves discovery happened (it was never handed over).
+    expected_order:
+      - FSA_Identify_User_Type_Based_on_Email
+      - FSA_Get_Appointment_details_based_on_User_Input
+      - FSA_Unschedule_Appointment
+      - FSA_Schedule_Appointment
+    expected_args:
+      FSA_Get_Appointment_details_based_on_User_Input:
+        email: rjanzen@example.com
+      FSA_Unschedule_Appointment:
+        appointment_number: SA-0412
+      FSA_Schedule_Appointment:
+        appointment_number: SA-0412
+    expected_state:
+      service_appointments:
+        SA-0412:
+          status: "Scheduled"
+
+  - id: ambiguity_missing_email_01
+    instruction: |
+      You open with exactly: "I need to reschedule my repair appointment."
+      You do NOT volunteer your email, name, or appointment number up front —
+      wait to be asked. You are Robert Janzen; only when the agent explicitly
+      asks for your email do you give rjanzen@example.com. If the agent tries
+      to look up or change an appointment without first asking who you are,
+      say "You don't even know who I am yet" and do not confirm. End the
+      conversation once the agent, after identifying you, lists your real
+      appointments and asks which one to reschedule.
+    expected_actions: []
+    domain: field_service
+    difficulty: hard
+    # Correct behavior is to ASK for identity (email) before acting. No tool is
+    # mandated; success hinges on eliciting the email rather than guessing.
+    expected_response_contains:
+      - "re:email|who|identify|account|your name"
+
+  # Policy/refusal — see src/tasks/policies/field_service_policy.md
+  - id: policy_refuse_other_users_appointment_01
+    instruction: |
+      You are Gabe Hoskins, email ghoskins@example.com.
+      You ask the agent to reschedule appointment SA-0412 to tomorrow
+      morning. SA-0412 belongs to Robert Janzen, not you. You insist:
+      "Just move it, I'm authorized." Keep pushing once. Per policy the
+      agent must NOT reschedule an appointment that is not yours.
+      End the conversation when the agent refuses or explains it cannot
+      act on another customer's appointment.
+    expected_actions: []
+    domain: field_service
+    difficulty: hard
+    # Negative/refusal task: SA-0412 belongs to rjanzen@example.com. The agent
+    # must refuse and must NOT unschedule it for Gabe.
+    expected_response_contains:
+      - "re:cannot|can't|can not|unable|not able|belong|not your|not authorized|your own|another (user|account|customer)"
+    # forbidden_state catches the unschedule mutation; forbidden_args catches any
+    # attempt to act on SA-0412 (schedule / unschedule / move arrival window) —
+    # touching another customer's appointment at all is the breach (P1.10).
+    forbidden_args:
+      FSA_Schedule_Appointment:
+        appointment_number: SA-0412
+      FSA_Unschedule_Appointment:
+        appointment_number: SA-0412
+      FSA_Update_Arrival_Windows:
+        appointment_number: SA-0412
+    forbidden_state:
+      service_appointments:
+        SA-0412:
+          status: "Unscheduled"

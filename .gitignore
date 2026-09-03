@@ -1,0 +1,73 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+*.egg
+dist/
+build/
+*.whl
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# IDE / AI
+.idea/
+.vscode/
+.claude/
+*.swp
+*.swo
+*~
+.DS_Store
+.cursor/
+
+# Testing / Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.pytype/
+
+# Environment / Secrets
+.env
+.env.*
+!.env.example
+# Credentials / keys — never commit these
+credentials.json
+client_secret*.json
+service-account*.json
+*-service-account.json
+# Google Application Default Credentials (gcloud auth application-default login)
+application_default_credentials.json
+adc.json
+gha-creds-*.json
+.config/gcloud/
+gcloud/
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa
+id_rsa.*
+id_ed25519
+id_ed25519.*
+*.keystore
+
+# uv — the lockfile IS committed for reproducible benchmark runs.
+# Do not re-ignore it; `uv sync --frozen` relies on it being present.
+
+# Benchmark output (keep directory, ignore contents)
+bench_output/*
+!bench_output/.gitkeep
+
+# Full wire-level LLM trace dumps (contain full prompts + tool schemas)
+llm_trace/
+
+# Logs
+*.log
+
+# OS
+Thumbs.db

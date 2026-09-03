@@ -1,0 +1,69 @@
+# Smoke test — 2 tasks with stateful tools for fast validation.
+#
+# Usage:
+#   python -m harness.bench_runner \
+#     --tasks src/tasks/eval_customer_service_graph_smoke_test.yaml \
+#     --config src/agents/customer_service_graph.yaml
+
+tasks:
+  - id: billing_refund_01
+    instruction: |
+      You are Alex Chen, account ID ACC-5521.
+      You received a defective product (order ORD-8834) and want a full refund.
+      You are polite but firm. Do not accept store credit.
+      If the agent asks for your invoice ID, it is INV-8834.
+      When the refund is confirmed, end the conversation.
+    expected_actions:
+      - get_invoice
+      - process_refund
+    domain: customer_service
+    initial_state:
+      accounts:
+        ACC-5521:
+          account_id: ACC-5521
+          full_name: Alex Chen
+          email: alex.chen@example.com
+          plan: Enterprise
+          status: Active
+          balance: "$0.00"
+      invoices:
+        INV-8834:
+          invoice_id: INV-8834
+          account_id: ACC-5521
+          amount: "$247.50"
+          status: Paid
+          date: "2024-03-15"
+          items: "1x Widget Pro (defective)"
+    expected_state:
+      invoices:
+        INV-8834:
+          status: Refunded
+
+  - id: billing_payment_check_01
+    instruction: |
+      You are Priya Patel, account ID ACC-3017.
+      You made a payment last week but your account still shows a balance.
+      You want the agent to check your payment status, confirm it was received,
+      and verify that your account balance is now correct.
+      When the agent confirms your payment was received AND your balance is $0,
+      end the conversation.
+    expected_actions:
+      - check_payment
+      - check_account_balance
+    domain: customer_service
+    initial_state:
+      accounts:
+        ACC-3017:
+          account_id: ACC-3017
+          full_name: Priya Patel
+          email: priya.patel@example.com
+          plan: Professional
+          status: Active
+          balance: "$0.00"
+      payments:
+        PAY-3017:
+          payment_id: PAY-3017
+          account_id: ACC-3017
+          amount: "$175.00"
+          date: "2024-03-08"
+          status: Received and Applied

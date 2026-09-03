@@ -1,0 +1,62 @@
+# Customer Service Graph Agent
+#
+# A multi-node graph agent with 3 nodes: billing, support, and general.
+# Each node has its own tools and instructions. Topic routing is handled
+# per-turn by the classifier (handoff between nodes is not yet implemented).
+#
+# Usage:
+#   uv run python -m harness.graph_cli --config src/agents/customer_service_graph.yaml
+#
+# With LiteLLM + Anthropic:
+#   LLM_PROVIDER=litellm LLM_MODEL=anthropic/claude-sonnet-4-20250514 \
+#     uv run python -m harness.graph_cli --config src/agents/customer_service_graph.yaml
+#
+# Engine selection (both are vendor-runtime-free):
+#   USE_BURR=1 (default) — Apache Burr state-machine ReAct loop per node
+#   USE_BURR=0            — plain-Python ReAct loop per node
+
+system_prompt: |
+  You are a customer service agent for Acme Corp.
+  Be friendly, concise, and always use tools to look up real data before answering.
+
+entry_node: general
+
+nodes:
+  billing:
+    description: "Billing questions, invoices, payments, refunds"
+    instructions: |
+      Handle billing and invoice inquiries.
+      Always look up the invoice or payment before answering.
+    tools:
+      - name: get_invoice
+        description: "Look up an invoice by ID (e.g. INV-1234)"
+      - name: check_payment
+        description: "Check payment status for an account"
+      - name: process_refund
+        description: "Process a refund for an invoice"
+      - name: check_account_balance
+        description: "Check current account balance and recent transactions"
+
+  support:
+    description: "Technical support, bug reports, troubleshooting"
+    instructions: |
+      Handle technical support and troubleshooting.
+      Search the knowledge base before answering.
+    tools:
+      - name: create_ticket
+        description: "Create a support ticket with subject and priority"
+      - name: search_kb
+        description: "Search the knowledge base for solutions"
+      - name: check_service_status
+        description: "Check if a service is currently operational"
+
+  general:
+    description: "General questions, greetings, account info"
+    instructions: |
+      Handle general questions that don't fit billing or support.
+      Greet the customer and help route them to the right place.
+    tools:
+      - name: get_account_info
+        description: "Look up account information by account ID"
+      - name: get_datetime
+        description: "Get the current date and time"
