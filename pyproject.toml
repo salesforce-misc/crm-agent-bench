@@ -30,7 +30,7 @@ dependencies = [
     # Apache Burr: the open-source state-machine runtime the per-node ReAct loop
     # is built on. Replaces the proprietary agent runtime this project used to
     # depend on. The [pydantic] extra enables typed state.
-    "burr[pydantic]>=0.40,<1",
+    "apache-burr[pydantic]>=0.40,<1",
 ]
 
 [project.urls]

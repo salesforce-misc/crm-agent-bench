@@ -38,7 +38,7 @@ Burr state machine (`reason → execute_tools → reason … → finish`). See
 |---|---|---|
 | **ReAct loop** | Apache Burr state machine | Plain Python loop |
 | **Activate** | Default (`USE_BURR=1`) | `USE_BURR=0` |
-| **Dependencies** | `burr[pydantic]` (public PyPI) | none beyond core |
+| **Dependencies** | `apache-burr[pydantic]` (public PyPI) | none beyond core |
 
 Both engines share the same topic router, per-node tool isolation, and refusal
 handling, and drive the same `LLMClient` / `ToolRegistry`.

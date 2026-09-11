@@ -215,23 +215,6 @@ wheels = [
 ]
 
 [[package]]
-name = "burr"
-version = "0.42.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "apache-burr" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/21/79/475352b260b18ac3ecbb22b905ba55561d2ce2bf1b0d3d3400c9db57aa4c/burr-0.42.0.tar.gz", hash = "sha256:82f7da9925d6eae8fadc166f1919fcf27aa5ba8022795475c99f072c05c25516", size = 3008, upload_time = "2026-07-18T21:40:54.159Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/c6/68/53d88f59afb083c77ef9f78fddbd9f604750ab8b2b31031cd83f6b36563d/burr-0.42.0-py3-none-any.whl", hash = "sha256:44e43327726c6e8b27b4dcb2d80b3692737780e38c6edf20506d69c823fa73d1", size = 2335, upload_time = "2026-07-18T21:40:53.171Z" },
-]
-
-[package.optional-dependencies]
-pydantic = [
-    { name = "apache-burr", extra = ["pydantic"] },
-]
-
-[[package]]
 name = "certifi"
 version = "2026.7.22"
 source = { registry = "https://pypi.org/simple" }
@@ -529,7 +512,7 @@ name = "crm-agent-bench"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
-    { name = "burr", extra = ["pydantic"] },
+    { name = "apache-burr", extra = ["pydantic"] },
     { name = "httpx" },
     { name = "litellm" },
     { name = "openai" },
@@ -550,7 +533,7 @@ lint = [
 
 [package.metadata]
 requires-dist = [
-    { name = "burr", extras = ["pydantic"], specifier = ">=0.40,<1" },
+    { name = "apache-burr", extras = ["pydantic"], specifier = ">=0.40,<1" },
     { name = "httpx", specifier = ">=0.28,<1" },
     { name = "litellm", specifier = ">=1.83,<2" },
     { name = "openai", specifier = ">=2.30,<3" },
