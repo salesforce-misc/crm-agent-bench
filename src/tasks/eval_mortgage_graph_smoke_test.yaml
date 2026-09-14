@@ -1,0 +1,43 @@
+# Mortgage Advisor Agent Smoke Test — 3 quick read-only tasks for validation.
+#
+# Usage:
+#   python -m harness.bench_runner \
+#     --tasks src/tasks/eval_mortgage_graph_smoke_test.yaml \
+#     --config src/agents/mortgage_advisor_graph.yaml
+
+tasks:
+- id: smoke_mortgage_customer_lookup_01
+  instruction: |
+    You want the profile for customer CUST-3001. Ask the agent to look it
+    up. When the agent gives you the customer's name, end the conversation.
+  expected_actions:
+  - get_customer
+  domain: mortgage
+  expected_args:
+    get_customer:
+      customer_id: CUST-3001
+  expected_response_contains:
+  - Alice Nguyen
+
+- id: smoke_mortgage_application_status_02
+  instruction: |
+    You want the status of mortgage application APP-9001. Ask the agent to
+    look it up. When the agent tells you its status, end the conversation.
+  expected_actions:
+  - get_application_status
+  domain: mortgage
+  expected_args:
+    get_application_status:
+      application_id: APP-9001
+  expected_response_contains:
+  - re:IN_PROGRESS|in progress|In Progress
+
+- id: smoke_mortgage_current_rates_03
+  instruction: |
+    You want to know today's published mortgage rates. Ask the agent for the
+    current rate table. When the agent lists the rates, end the conversation.
+  expected_actions:
+  - get_current_rates
+  domain: mortgage
+  expected_response_contains:
+  - re:6.35|5.65

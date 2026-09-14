@@ -1,0 +1,46 @@
+# Dispute Investigator Agent Smoke Test — 3 quick read-only tasks for validation.
+#
+# Usage:
+#   python -m harness.bench_runner \
+#     --tasks src/tasks/eval_dispute_graph_smoke_test.yaml \
+#     --config src/agents/dispute_investigator_graph.yaml
+
+tasks:
+- id: smoke_dispute_get_dispute_01
+  instruction: |
+    You want the details of dispute DSP-3001. Ask the agent to look it up.
+    When the agent tells you its status and reason, end the conversation.
+  expected_actions:
+  - get_dispute
+  domain: dispute
+  expected_args:
+    get_dispute:
+      dispute_id: DSP-3001
+  expected_response_contains:
+  - re:open|product_not_received|not received
+
+- id: smoke_dispute_get_order_02
+  instruction: |
+    You want the details of order ORD-2001. Ask the agent to look it up. When
+    the agent tells you the product and amount, end the conversation.
+  expected_actions:
+  - get_order
+  domain: dispute
+  expected_args:
+    get_order:
+      order_id: ORD-2001
+  expected_response_contains:
+  - Espresso Machine
+
+- id: smoke_dispute_get_customer_03
+  instruction: |
+    You want the profile for customer CUST-01. Ask the agent to look it up.
+    When the agent gives you the customer's name, end the conversation.
+  expected_actions:
+  - get_customer
+  domain: dispute
+  expected_args:
+    get_customer:
+      customer_id: CUST-01
+  expected_response_contains:
+  - Alex Rivera

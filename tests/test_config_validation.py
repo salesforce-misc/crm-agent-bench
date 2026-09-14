@@ -180,6 +180,17 @@ _DOMAIN_CONFIGS = [
     ("support", _AGENTS_DIR / "support_case_submission_graph.yaml"),
     ("integration", _AGENTS_DIR / "integration_weather_graph.yaml"),
     ("integration", _AGENTS_DIR / "integration_external_apis_graph.yaml"),
+    # Ported external tool-use benchmarks + agent galleries (6 new domains, 9
+    # new agent graphs). See docs/external-benchmark-port.md.
+    ("telecom", _AGENTS_DIR / "telecom_troubleshooting_graph.yaml"),
+    ("telecom", _AGENTS_DIR / "telecom_billing_graph.yaml"),
+    ("workspace", _AGENTS_DIR / "workspace_email_graph.yaml"),
+    ("workspace", _AGENTS_DIR / "workspace_calendar_graph.yaml"),
+    ("workspace", _AGENTS_DIR / "workspace_project_graph.yaml"),
+    ("finance", _AGENTS_DIR / "finance_brokerage_graph.yaml"),
+    ("mortgage", _AGENTS_DIR / "mortgage_advisor_graph.yaml"),
+    ("security", _AGENTS_DIR / "security_threat_intel_graph.yaml"),
+    ("dispute", _AGENTS_DIR / "dispute_investigator_graph.yaml"),
 ]
 
 # All task files, paired with the domain whose registry their tools must exist
@@ -228,6 +239,24 @@ _TASK_FILES = [
     ("integration", _TASKS_DIR / "eval_integration_weather_graph.yaml"),
     ("integration", _TASKS_DIR / "eval_integration_external_apis_graph.yaml"),
     ("integration", _TASKS_DIR / "eval_integration_graph_smoke_test.yaml"),
+    # Ported external tool-use benchmarks + agent galleries: 9 per-agent eval
+    # files + 6 per-domain smoke files across the 6 new domains. See
+    # docs/external-benchmark-port.md.
+    ("telecom", _TASKS_DIR / "eval_telecom_troubleshooting_graph.yaml"),
+    ("telecom", _TASKS_DIR / "eval_telecom_billing_graph.yaml"),
+    ("telecom", _TASKS_DIR / "eval_telecom_graph_smoke_test.yaml"),
+    ("workspace", _TASKS_DIR / "eval_workspace_email_graph.yaml"),
+    ("workspace", _TASKS_DIR / "eval_workspace_calendar_graph.yaml"),
+    ("workspace", _TASKS_DIR / "eval_workspace_project_graph.yaml"),
+    ("workspace", _TASKS_DIR / "eval_workspace_graph_smoke_test.yaml"),
+    ("finance", _TASKS_DIR / "eval_finance_brokerage_graph.yaml"),
+    ("finance", _TASKS_DIR / "eval_finance_graph_smoke_test.yaml"),
+    ("mortgage", _TASKS_DIR / "eval_mortgage_advisor_graph.yaml"),
+    ("mortgage", _TASKS_DIR / "eval_mortgage_graph_smoke_test.yaml"),
+    ("security", _TASKS_DIR / "eval_security_threat_intel_graph.yaml"),
+    ("security", _TASKS_DIR / "eval_security_graph_smoke_test.yaml"),
+    ("dispute", _TASKS_DIR / "eval_dispute_investigator_graph.yaml"),
+    ("dispute", _TASKS_DIR / "eval_dispute_graph_smoke_test.yaml"),
 ]
 
 

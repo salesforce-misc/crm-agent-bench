@@ -1,0 +1,43 @@
+# Finance Brokerage Agent Smoke Test — 3 quick read-only tasks for validation.
+#
+# Usage:
+#   python -m harness.bench_runner \
+#     --tasks src/tasks/eval_finance_graph_smoke_test.yaml \
+#     --config src/agents/finance_brokerage_graph.yaml
+
+tasks:
+- id: smoke_finance_stock_quote_01
+  instruction: |
+    You want the current price of AAPL. Ask the agent for a quote. When the
+    agent tells you the price, end the conversation.
+  expected_actions:
+  - get_stock_quote
+  domain: finance
+  expected_args:
+    get_stock_quote:
+      symbol: AAPL
+  expected_response_contains:
+  - '227.16'
+
+- id: smoke_finance_market_status_02
+  instruction: |
+    You want to know whether the market is open right now. Ask the agent.
+    When the agent tells you, end the conversation.
+  expected_actions:
+  - get_market_status
+  domain: finance
+  expected_response_contains:
+  - re:Closed|closed
+
+- id: smoke_finance_order_lookup_03
+  instruction: |
+    You want the details of order ORD-12345. Ask the agent to look it up.
+    When the agent tells you its status, end the conversation.
+  expected_actions:
+  - get_order
+  domain: finance
+  expected_args:
+    get_order:
+      order_id: ORD-12345
+  expected_response_contains:
+  - re:Completed|completed

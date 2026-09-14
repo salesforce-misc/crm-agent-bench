@@ -1,0 +1,46 @@
+# Security Threat-Intel Agent Smoke Test — 3 quick read-only tasks for validation.
+#
+# Usage:
+#   python -m harness.bench_runner \
+#     --tasks src/tasks/eval_security_graph_smoke_test.yaml \
+#     --config src/agents/security_threat_intel_graph.yaml
+
+tasks:
+- id: smoke_security_ip_reputation_01
+  instruction: |
+    You want the reputation of IP 8.8.8.8. Ask the agent to enrich it. When
+    the agent tells you its abuse/reputation status, end the conversation.
+  expected_actions:
+  - lookup_ip_reputation
+  domain: security
+  expected_args:
+    lookup_ip_reputation:
+      ip_address: 8.8.8.8
+  expected_response_contains:
+  - re:Google|clean|0
+
+- id: smoke_security_cve_lookup_02
+  instruction: |
+    You want details on CVE-2024-3094. Ask the agent to look it up. When the
+    agent tells you its severity, end the conversation.
+  expected_actions:
+  - lookup_cve
+  domain: security
+  expected_args:
+    lookup_cve:
+      cve_id: CVE-2024-3094
+  expected_response_contains:
+  - re:Critical|critical
+
+- id: smoke_security_incident_lookup_03
+  instruction: |
+    You want the details of incident INC-1001. Ask the agent to pull it up.
+    When the agent tells you its status, end the conversation.
+  expected_actions:
+  - get_incident
+  domain: security
+  expected_args:
+    get_incident:
+      incident_id: INC-1001
+  expected_response_contains:
+  - re:Open|open

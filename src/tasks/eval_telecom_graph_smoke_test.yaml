@@ -1,0 +1,48 @@
+# Telecom Agent Smoke Test — 3 quick read-only tasks for validation.
+#
+# Usage:
+#   python -m harness.bench_runner \
+#     --tasks src/tasks/eval_telecom_graph_smoke_test.yaml \
+#     --config src/agents/telecom_troubleshooting_graph.yaml
+
+tasks:
+- id: smoke_telecom_line_status_01
+  instruction: |
+    You want to check the current status of line LINE-1. Ask the agent to
+    look it up. When the agent tells you the line's status, end the
+    conversation.
+  expected_actions:
+  - get_line_status
+  domain: telecom
+  expected_args:
+    get_line_status:
+      line_id: LINE-1
+  expected_response_contains:
+  - re:Active|active
+
+- id: smoke_telecom_customer_lookup_02
+  instruction: |
+    You want the account details for customer CUST-1. Ask the agent to look
+    up that customer. When the agent gives you the customer's name, end the
+    conversation.
+  expected_actions:
+  - get_customer
+  domain: telecom
+  expected_args:
+    get_customer:
+      customer_id: CUST-1
+  expected_response_contains:
+  - Alex Rivera
+
+- id: smoke_telecom_bill_lookup_03
+  instruction: |
+    You want to know the amount due and status of bill BILL-1. Ask the agent
+    to look it up. When the agent tells you the status, end the conversation.
+  expected_actions:
+  - get_bill
+  domain: telecom
+  expected_args:
+    get_bill:
+      bill_id: BILL-1
+  expected_response_contains:
+  - re:Paid|paid

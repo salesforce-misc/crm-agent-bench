@@ -3,13 +3,19 @@ from harness.tools.domains import (
     commerce,  # noqa: F401
     csm,  # noqa: F401
     customer_service,  # noqa: F401
+    dispute,  # noqa: F401
     field_service,  # noqa: F401
+    finance,  # noqa: F401
     integration,  # noqa: F401
     itsm,  # noqa: F401
     marketing,  # noqa: F401
+    mortgage,  # noqa: F401
     onboarding,  # noqa: F401
     payments,  # noqa: F401
     sdr,  # noqa: F401
+    security,  # noqa: F401
     support,  # noqa: F401
+    telecom,  # noqa: F401
     travel,  # noqa: F401
+    workspace,  # noqa: F401
 )

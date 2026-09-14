@@ -80,11 +80,15 @@ uv run python -m analysis --help
 
 ### Agents & tasks
 
-**27 agents across 12 domains, 583 graded tasks.** The seven `commerce`…
+**36 agents across 18 domains, 781 graded tasks.** The seven `commerce`…
 `integration` domains below are ported from
 [`trailheadapps/agent-script-recipes`](https://github.com/trailheadapps/agent-script-recipes)
 into this harness's native format — see
-[`docs/agent-script-recipes-port.md`](docs/agent-script-recipes-port.md). Each
+[`docs/agent-script-recipes-port.md`](docs/agent-script-recipes-port.md). The
+six `telecom`…`dispute` domains are a second, separate expansion ported from
+public tool-use benchmarks and agent-example galleries (tau2-bench, WorkBench,
+BFCL, AWS/Anthropic/OpenAI samples) — see
+[`docs/external-benchmark-port.md`](docs/external-benchmark-port.md). Each
 ported agent carries ≥20 tasks with a mixed easy/medium/hard spread, plus a
 per-domain smoke file (`eval_<domain>_graph_smoke_test.yaml`).
 
@@ -117,6 +121,15 @@ per-domain smoke file (`eval_<domain>_graph_smoke_test.yaml`).
 | Support · Case Submission | `src/agents/support_case_submission_graph.yaml` | 22 | `support` |
 | Integration · Weather | `src/agents/integration_weather_graph.yaml` | 22 | `integration` |
 | Integration · External APIs | `src/agents/integration_external_apis_graph.yaml` | 22 | `integration` |
+| Telecom · Troubleshooting | `src/agents/telecom_troubleshooting_graph.yaml` | 22 | `telecom` |
+| Telecom · Billing | `src/agents/telecom_billing_graph.yaml` | 22 | `telecom` |
+| Workspace · Email | `src/agents/workspace_email_graph.yaml` | 22 | `workspace` |
+| Workspace · Calendar | `src/agents/workspace_calendar_graph.yaml` | 22 | `workspace` |
+| Workspace · Project | `src/agents/workspace_project_graph.yaml` | 22 | `workspace` |
+| Finance · Brokerage | `src/agents/finance_brokerage_graph.yaml` | 22 | `finance` |
+| Mortgage · Advisor | `src/agents/mortgage_advisor_graph.yaml` | 22 | `mortgage` |
+| Security · Threat Intel | `src/agents/security_threat_intel_graph.yaml` | 22 | `security` |
+| Dispute · Investigator | `src/agents/dispute_investigator_graph.yaml` | 22 | `dispute` |
 
 ## Interactive usage
 

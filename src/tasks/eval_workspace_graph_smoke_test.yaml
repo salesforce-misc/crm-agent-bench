@@ -1,0 +1,44 @@
+# Workspace Agent Smoke Test — 3 quick read-only tasks for validation.
+#
+# Usage:
+#   python -m harness.bench_runner \
+#     --tasks src/tasks/eval_workspace_graph_smoke_test.yaml \
+#     --config src/agents/workspace_email_graph.yaml
+
+tasks:
+- id: smoke_workspace_get_email_01
+  instruction: |
+    You want to read the full contents of email EMAIL-1001. Ask the agent to
+    open it. When the agent tells you the subject, end the conversation.
+  expected_actions:
+  - get_email
+  domain: workspace
+  expected_args:
+    get_email:
+      email_id: EMAIL-1001
+  expected_response_contains:
+  - re:authentication|auth
+
+- id: smoke_workspace_find_employee_02
+  instruction: |
+    You need the email address for your colleague Aisha. Ask the agent to
+    find it. When the agent gives you the address, end the conversation.
+  expected_actions:
+  - find_employee_email
+  domain: workspace
+  expected_args:
+    find_employee_email:
+      name: {_contains: "aisha"}
+  expected_response_contains:
+  - aisha.chen@atlas.com
+
+- id: smoke_workspace_search_events_03
+  instruction: |
+    You want to find the calendar event about the design review. Ask the
+    agent to search your calendar for it. When the agent tells you when it
+    is, end the conversation.
+  expected_actions:
+  - search_events
+  domain: workspace
+  expected_response_contains:
+  - re:Design review|design
