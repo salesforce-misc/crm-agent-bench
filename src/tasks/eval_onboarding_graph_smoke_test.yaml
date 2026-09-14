@@ -1,0 +1,68 @@
+# Onboarding Agent Smoke Test — 3 quick tasks for validation.
+#
+# Usage:
+#   python -m harness.bench_runner \
+#     --tasks src/tasks/eval_onboarding_graph_smoke_test.yaml \
+#     --config src/agents/onboarding_task_manager_graph.yaml
+
+tasks:
+- id: smoke_onboarding_task_manager_01
+  instruction: 'You are the HR coordinator managing the "New Hire Onboarding" checklist,
+
+    list ID LIST-ONBOARD1. Ask the agent to add a task titled exactly
+
+    "Submit tax forms" to that list. When the agent confirms the task has
+
+    been added, end the conversation.
+
+    '
+  domain: onboarding
+  expected_actions:
+  - add_task
+  expected_args:
+    add_task:
+      list_id: LIST-ONBOARD1
+      title: Submit tax forms
+  expected_state:
+    task_lists:
+      LIST-ONBOARD1:
+        tasks:
+          _min_length: 4
+- id: smoke_onboarding_task_manager_02
+  instruction: 'You are the HR coordinator for onboarding list LIST-ONBOARD1. You know
+
+    the "Complete HR paperwork" task has task ID TSK-SEED02. Ask the agent
+
+    to mark task TSK-SEED02 as complete. When the agent confirms it is
+
+    done, end the conversation.
+
+    '
+  domain: onboarding
+  expected_actions:
+  - complete_task
+  expected_args:
+    complete_task:
+      task_id: TSK-SEED02
+  expected_state:
+    task_lists:
+      LIST-ONBOARD1:
+        tasks:
+          TSK-SEED02:
+            done: true
+- id: smoke_onboarding_task_manager_03
+  instruction: 'You want to see everything currently on the onboarding checklist for
+
+    list LIST-ONBOARD1. Ask the agent to list the tasks. When the agent
+
+    lists them, end the conversation.
+
+    '
+  domain: onboarding
+  expected_actions:
+  - list_tasks
+  expected_args:
+    list_tasks:
+      list_id: LIST-ONBOARD1
+  expected_response_contains:
+  - Schedule orientation

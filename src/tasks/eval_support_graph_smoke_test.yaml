@@ -1,0 +1,71 @@
+# Support Agent Smoke Test — 3 quick tasks for validation.
+#
+# Usage:
+#   python -m harness.bench_runner \
+#     --tasks src/tasks/eval_support_graph_smoke_test.yaml \
+#     --config src/agents/support_triage_graph.yaml
+
+tasks:
+- id: smoke_support_triage_01
+  instruction: 'You are Dana Whitfield. Your customer ID is CUST-1001. You want the
+
+    agent to pull up your account and confirm your name and support tier
+
+    before you describe any issue. When asked for your customer ID,
+
+    provide CUST-1001. As soon as the agent states your name and tier,
+
+    say "That''s correct, thanks" and end the conversation.
+
+    '
+  domain: support
+  expected_actions:
+  - fetch_customer
+  expected_args:
+    fetch_customer:
+      customer_id: CUST-1001
+  expected_response_contains:
+  - Dana
+  - re:Enterprise
+- id: smoke_support_triage_02
+  instruction: 'You are Marcus Yee. Your customer ID is CUST-1002. You want the agent
+
+    to confirm your account details are on file before anything else. When
+
+    asked for your customer ID, provide CUST-1002. As soon as the agent
+
+    confirms your name and tier, say "Great, thanks" and end the
+
+    conversation.
+
+    '
+  domain: support
+  expected_actions:
+  - fetch_customer
+  expected_args:
+    fetch_customer:
+      customer_id: CUST-1002
+  expected_response_contains:
+  - Marcus
+  - Standard
+- id: smoke_support_triage_03
+  instruction: 'You are Priya Nadkarni. Your customer ID is CUST-1003. You want the
+
+    agent to look up your account and confirm your support tier. When
+
+    asked for your customer ID, provide CUST-1003. As soon as the agent
+
+    confirms your name and tier, say "Perfect, that''s all I needed" and
+
+    end the conversation.
+
+    '
+  domain: support
+  expected_actions:
+  - fetch_customer
+  expected_args:
+    fetch_customer:
+      customer_id: CUST-1003
+  expected_response_contains:
+  - Priya
+  - Premium

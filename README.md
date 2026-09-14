@@ -80,6 +80,14 @@ uv run python -m analysis --help
 
 ### Agents & tasks
 
+**27 agents across 12 domains, 583 graded tasks.** The seven `commerce`…
+`integration` domains below are ported from
+[`trailheadapps/agent-script-recipes`](https://github.com/trailheadapps/agent-script-recipes)
+into this harness's native format — see
+[`docs/agent-script-recipes-port.md`](docs/agent-script-recipes-port.md). Each
+ported agent carries ≥20 tasks with a mixed easy/medium/hard spread, plus a
+per-domain smoke file (`eval_<domain>_graph_smoke_test.yaml`).
+
 | Agent | Config | Tasks | Domain |
 |-------|--------|------:|--------|
 | Customer Service | `src/agents/customer_service_graph.yaml` | 13 | `customer_service` |
@@ -87,6 +95,28 @@ uv run python -m analysis --help
 | Field Service | `src/agents/field_service_graph.yaml` | 23 | `field_service` |
 | SDR | `src/agents/sdr_graph.yaml` | 19 | `sdr` |
 | Marketing | `src/agents/marketing_graph.yaml` | 21 | `marketing` |
+| Commerce · Product QA | `src/agents/commerce_product_qa_graph.yaml` | 22 | `commerce` |
+| Commerce · Cart | `src/agents/commerce_cart_graph.yaml` | 22 | `commerce` |
+| Commerce · Returns | `src/agents/commerce_returns_graph.yaml` | 23 | `commerce` |
+| Payments · Checkout | `src/agents/payments_checkout_graph.yaml` | 22 | `payments` |
+| Payments · Transfer | `src/agents/payments_transfer_graph.yaml` | 22 | `payments` |
+| Payments · Loan | `src/agents/payments_loan_graph.yaml` | 22 | `payments` |
+| Travel · Hotel Booking | `src/agents/travel_hotel_booking_graph.yaml` | 22 | `travel` |
+| Travel · Trip | `src/agents/travel_trip_graph.yaml` | 22 | `travel` |
+| Travel · Guest Schedule | `src/agents/travel_guest_schedule_graph.yaml` | 23 | `travel` |
+| ITSM · Ticket Ops | `src/agents/itsm_ticket_ops_graph.yaml` | 22 | `itsm` |
+| ITSM · Record Safety | `src/agents/itsm_record_safety_graph.yaml` | 22 | `itsm` |
+| ITSM · Case Hours | `src/agents/itsm_case_hours_graph.yaml` | 22 | `itsm` |
+| Onboarding · Account Setup | `src/agents/onboarding_account_setup_graph.yaml` | 22 | `onboarding` |
+| Onboarding · Task Manager | `src/agents/onboarding_task_manager_graph.yaml` | 22 | `onboarding` |
+| Support · Triage | `src/agents/support_triage_graph.yaml` | 22 | `support` |
+| Support · Churn | `src/agents/support_churn_graph.yaml` | 22 | `support` |
+| Support · Specialist Routing | `src/agents/support_specialist_routing_graph.yaml` | 22 | `support` |
+| Support · Escalation | `src/agents/support_escalation_graph.yaml` | 22 | `support` |
+| Support · Delegation | `src/agents/support_delegation_graph.yaml` | 22 | `support` |
+| Support · Case Submission | `src/agents/support_case_submission_graph.yaml` | 22 | `support` |
+| Integration · Weather | `src/agents/integration_weather_graph.yaml` | 22 | `integration` |
+| Integration · External APIs | `src/agents/integration_external_apis_graph.yaml` | 22 | `integration` |
 
 ## Interactive usage
 

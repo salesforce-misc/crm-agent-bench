@@ -1,0 +1,518 @@
+# Shopping Cart Assistant Agent Benchmark — 22 tasks with stateful tools.
+#
+# All tasks use domain: commerce so tools read/write shared state from the
+# mock electronics storefront (see src/harness/tools/domains/commerce.py).
+# The "shopping" node exposes exactly 5 tools: get_product, search_products,
+# add_to_cart, get_cart, get_recommendations.
+#
+# Seed data:
+#   Products: PROD-1001 Wireless Noise-Cancelling Headphones ($249.99, Audio)
+#              PROD-1002 Smart Fitness Watch ($179.99, Wearables)
+#              PROD-1003 Portable Bluetooth Speaker ($89.99, Audio)
+#              PROD-1004 4K Streaming Media Player ($49.99, Electronics, OUT OF STOCK)
+#   Carts:    CUST-501 (Jordan Lee) already has 1x PROD-1002, total 179.99.
+#             CUST-502 (Priya Nair) has no seeded cart — auto-created empty.
+#
+# Usage:
+#   python -m harness.bench_runner \
+#     --tasks src/tasks/eval_commerce_cart_graph.yaml \
+#     --config src/agents/commerce_cart_graph.yaml
+
+tasks:
+  # ── Easy: single-tool lookups ───────────────────────────────────
+
+  - id: commerce_cart_001
+    instruction: |
+      You want to know the price and a short description of the product with
+      ID PROD-1001. As soon as the agent tells you the price, say "thanks,
+      that's all" and end the conversation.
+    expected_actions:
+      - get_product
+    domain: commerce
+    difficulty: easy
+    expected_args:
+      get_product:
+        product_id: PROD-1001
+    expected_response_contains:
+      - "249.99"
+
+  - id: commerce_cart_002
+    instruction: |
+      You are Jordan Lee, customer ID CUST-501. You want to see what's
+      currently in your cart and the total. When asked for your customer ID,
+      provide CUST-501. As soon as the agent tells you your cart contents and
+      total, end the conversation.
+    expected_actions:
+      - get_cart
+    domain: commerce
+    difficulty: easy
+    expected_args:
+      get_cart:
+        customer_id: CUST-501
+    expected_response_contains:
+      - "179.99"
+      - "re:fitness watch"
+
+  - id: commerce_cart_003
+    instruction: |
+      You want to browse everything in the "audio" category. Ask the agent to
+      search for audio products. As soon as the agent lists the matching
+      products, end the conversation.
+    expected_actions:
+      - search_products
+    domain: commerce
+    difficulty: easy
+    expected_args:
+      search_products:
+        query: {_contains: "audio"}
+    expected_response_contains:
+      - "re:headphones"
+      - "re:speaker"
+
+  - id: commerce_cart_004
+    instruction: |
+      You are customer CUST-501. You want to add the Portable Bluetooth
+      Speaker (product ID PROD-1003) to your cart, quantity 1. When asked for
+      your customer ID, provide CUST-501. As soon as the agent confirms it
+      was added, end the conversation.
+    expected_actions:
+      - add_to_cart
+    domain: commerce
+    difficulty: easy
+    expected_args:
+      add_to_cart:
+        customer_id: CUST-501
+        product_id: PROD-1003
+        quantity: 1
+    expected_state:
+      carts:
+        CUST-501:
+          items:
+            _min_length: 2
+          total: 269.98
+
+  - id: commerce_cart_005
+    instruction: |
+      You are a new customer, ID CUST-502. You want to add the Wireless
+      Noise-Cancelling Headphones (product ID PROD-1001) to your cart,
+      quantity 1. When asked for your customer ID, provide CUST-502. As soon
+      as the agent confirms the item was added, end the conversation.
+    expected_actions:
+      - add_to_cart
+    domain: commerce
+    difficulty: easy
+    expected_args:
+      add_to_cart:
+        customer_id: CUST-502
+        product_id: PROD-1001
+        quantity: 1
+    expected_state:
+      carts:
+        CUST-502:
+          items:
+            _min_length: 1
+          total: 249.99
+
+  - id: commerce_cart_006
+    instruction: |
+      You just bought a Smart Fitness Watch (product ID PROD-1002) and want
+      to know what other products the store recommends alongside it. As soon
+      as the agent lists some recommended products, end the conversation.
+    expected_actions:
+      - get_recommendations
+    domain: commerce
+    difficulty: easy
+    expected_args:
+      get_recommendations:
+        product_id: PROD-1002
+    expected_response_contains:
+      - "re:headphones"
+
+  - id: commerce_cart_007
+    instruction: |
+      You want to search the catalog for "laptop". As soon as the agent tells
+      you there are no matching products, end the conversation.
+    expected_actions:
+      - search_products
+    domain: commerce
+    difficulty: easy
+    expected_args:
+      search_products:
+        query: {_contains: "laptop"}
+    expected_response_contains:
+      - "re:no .*(product|match|result)|couldn't find|not (find|available)"
+
+  - id: commerce_cart_008
+    instruction: |
+      You want to know whether the 4K Streaming Media Player (product ID
+      PROD-1004) is currently in stock. As soon as the agent answers, end
+      the conversation.
+    expected_actions:
+      - get_product
+    domain: commerce
+    difficulty: easy
+    expected_args:
+      get_product:
+        product_id: PROD-1004
+    expected_response_contains:
+      - "re:out of stock|not in stock|unavailable|not available"
+
+  # ── Medium: multi-step, ordering, precision ─────────────────────
+
+  - id: commerce_cart_009
+    instruction: |
+      You are customer CUST-501. First, ask the agent to add 2 units of the
+      Wireless Noise-Cancelling Headphones (product ID PROD-1001) to your
+      cart. When asked for your customer ID, provide CUST-501. After it
+      confirms the item was added, ask to see your updated cart and total.
+      End the conversation once you see the total.
+    expected_actions:
+      - add_to_cart
+      - get_cart
+    domain: commerce
+    difficulty: medium
+    expected_order:
+      - add_to_cart
+      - get_cart
+    expected_args:
+      add_to_cart:
+        customer_id: CUST-501
+        product_id: PROD-1001
+        quantity: 2
+      get_cart:
+        customer_id: CUST-501
+    expected_state:
+      carts:
+        CUST-501:
+          items:
+            _min_length: 2
+          total: 679.97
+    expected_response_contains:
+      - "679.97"
+
+  - id: commerce_cart_010
+    instruction: |
+      You are customer CUST-502. You want to find a portable speaker and add
+      it to your cart. Ask the agent to search for "speaker" first. Once it
+      shows you a matching product, ask it to add that product to your cart,
+      quantity 1. When asked for your customer ID, provide CUST-502. End the
+      conversation once the item is added.
+    expected_actions:
+      - search_products
+      - add_to_cart
+    domain: commerce
+    difficulty: medium
+    expected_order:
+      - search_products
+      - add_to_cart
+    expected_args:
+      search_products:
+        query: {_contains: "speaker"}
+      add_to_cart:
+        customer_id: CUST-502
+        product_id: PROD-1003
+        quantity: 1
+    expected_state:
+      carts:
+        CUST-502:
+          items:
+            _min_length: 1
+          total: 89.99
+
+  - id: commerce_cart_011
+    instruction: |
+      You are customer CUST-502. You know the 4K Streaming Media Player
+      (product ID PROD-1004) is out of stock, but you still want it added to
+      your cart now so you're ready when it's back in stock. When asked for
+      your customer ID, provide CUST-502. Insist on adding it even if the
+      agent mentions it's out of stock. End the conversation once it is added.
+    expected_actions:
+      - add_to_cart
+    domain: commerce
+    difficulty: medium
+    expected_args:
+      add_to_cart:
+        customer_id: CUST-502
+        product_id: PROD-1004
+        quantity: 1
+    expected_state:
+      carts:
+        CUST-502:
+          items:
+            _min_length: 1
+          total: 49.99
+
+  - id: commerce_cart_012
+    instruction: |
+      You are customer CUST-501. You want to add 3 units of the Portable
+      Bluetooth Speaker (product ID PROD-1003) to your cart. When asked for
+      your customer ID, provide CUST-501. End the conversation once the agent
+      confirms the item and quantity were added.
+    expected_actions:
+      - add_to_cart
+    domain: commerce
+    difficulty: medium
+    expected_args:
+      add_to_cart:
+        customer_id: CUST-501
+        product_id: PROD-1003
+        quantity: 3
+    expected_state:
+      carts:
+        CUST-501:
+          items:
+            _min_length: 2
+          total: 449.96
+
+  - id: commerce_cart_013
+    instruction: |
+      You are customer CUST-501. First, ask the agent to add the Wireless
+      Noise-Cancelling Headphones (product ID PROD-1001) to your cart,
+      quantity 1. When asked for your customer ID, provide CUST-501. After
+      it's added, ask what other products the agent recommends to go with
+      that item. End the conversation once the agent lists a recommendation.
+    expected_actions:
+      - add_to_cart
+      - get_recommendations
+    domain: commerce
+    difficulty: medium
+    expected_order:
+      - add_to_cart
+      - get_recommendations
+    expected_args:
+      add_to_cart:
+        customer_id: CUST-501
+        product_id: PROD-1001
+        quantity: 1
+      get_recommendations:
+        product_id: PROD-1001
+    expected_response_contains:
+      - "re:speaker"
+
+  - id: commerce_cart_014
+    instruction: |
+      You want to see what products the store has in the "Wearables"
+      category. Ask the agent to search for it (you can type it however you
+      like, e.g. all caps). As soon as the agent lists a matching product,
+      end the conversation.
+    expected_actions:
+      - search_products
+    domain: commerce
+    difficulty: medium
+    expected_args:
+      search_products:
+        query: {_contains: "wearable"}
+    expected_response_contains:
+      - "re:fitness watch"
+
+  - id: commerce_cart_015
+    instruction: |
+      You are a new customer, ID CUST-502, who hasn't bought anything yet.
+      You want to check what's in your cart before you start shopping. When
+      asked for your customer ID, provide CUST-502. As soon as the agent
+      tells you your cart is empty, end the conversation.
+    expected_actions:
+      - get_cart
+    domain: commerce
+    difficulty: medium
+    expected_args:
+      get_cart:
+        customer_id: CUST-502
+    expected_response_contains:
+      - "re:empty|no items|nothing in your cart|0 items"
+
+  - id: commerce_cart_016
+    instruction: |
+      You are customer CUST-502. Ask the agent to search for "headphones".
+      Once it shows you the matching product, ask it to add that product to
+      your cart, quantity 1. When asked for your customer ID, provide
+      CUST-502. Then ask to see your cart total. End the conversation once
+      you see the total.
+    expected_actions:
+      - search_products
+      - add_to_cart
+      - get_cart
+    domain: commerce
+    difficulty: medium
+    expected_order:
+      - search_products
+      - add_to_cart
+      - get_cart
+    expected_args:
+      search_products:
+        query: {_contains: "headphones"}
+      add_to_cart:
+        customer_id: CUST-502
+        product_id: PROD-1001
+        quantity: 1
+    expected_response_contains:
+      - "249.99"
+
+  # ── Hard: collateral damage, ambiguity, multi-hop, refusal ──────
+
+  - id: commerce_cart_017
+    instruction: |
+      You are customer CUST-502. You want to add the Wireless Noise-Cancelling
+      Headphones (product ID PROD-1001) to your cart, quantity 1. When asked
+      for your customer ID, provide CUST-502 — you are not CUST-501 and the
+      agent must add this to YOUR cart only. End the conversation once the
+      agent confirms the item was added to your cart.
+    expected_actions:
+      - add_to_cart
+    domain: commerce
+    difficulty: hard
+    # Collateral-damage check: this must land in CUST-502's cart only. If the
+    # agent mistakenly used CUST-501's ID, CUST-501's cart (seeded with
+    # PROD-1002 qty 1, total 179.99) would grow to total 429.98.
+    expected_args:
+      add_to_cart:
+        customer_id: CUST-502
+        product_id: PROD-1001
+        quantity: 1
+    expected_state:
+      carts:
+        CUST-502:
+          items:
+            _min_length: 1
+          total: 249.99
+    forbidden_args:
+      add_to_cart:
+        customer_id: CUST-501
+        product_id: PROD-1001
+    forbidden_state:
+      carts:
+        CUST-501:
+          total: 429.98
+
+  - id: commerce_cart_018
+    instruction: |
+      You are customer CUST-501. Say exactly: "Can you add the watch to my
+      cart?" Do NOT give a product ID — the agent must figure out which
+      product you mean on its own. When asked for your customer ID, provide
+      CUST-501. If the agent asks which watch or confirms a product name
+      with you, confirm it's the Smart Fitness Watch. End the conversation
+      once the agent confirms it was added.
+    expected_actions:
+      - search_products
+      - add_to_cart
+    domain: commerce
+    difficulty: hard
+    # CUST-501 already has 1x PROD-1002 in cart; adding it again increments
+    # quantity to 2, total 359.98 (2 x 179.99).
+    expected_order:
+      - search_products
+      - add_to_cart
+    expected_args:
+      add_to_cart:
+        customer_id: CUST-501
+        product_id: PROD-1002
+        quantity: 1
+    expected_state:
+      carts:
+        CUST-501:
+          total: 359.98
+
+  - id: commerce_cart_019
+    instruction: |
+      You are Jordan Lee. You open with exactly: "Can you check what's in my
+      cart?" Do NOT volunteer your customer ID up front — wait until the
+      agent explicitly asks for it. Only then provide CUST-501. If the agent
+      reports cart contents before asking who you are, say "You don't even
+      know whose cart that is" and do not confirm anything. End the
+      conversation once, after getting your ID, the agent reports your cart
+      contents and total.
+    expected_actions:
+      - get_cart
+    domain: commerce
+    difficulty: hard
+    # Success hinges on the agent asking for the customer ID before reporting
+    # any cart — no cart may be fabricated before CUST-501 is known.
+    expected_args:
+      get_cart:
+        customer_id: CUST-501
+    expected_response_contains:
+      - "179.99"
+
+  - id: commerce_cart_020
+    instruction: |
+      You are customer CUST-501. First, ask the agent to search for
+      "noise-cancelling headphones" and add the matching product to your
+      cart, quantity 1. When asked for your customer ID, provide CUST-501.
+      After it's added, ask what the agent recommends to go with it. Once it
+      names a recommended product, ask the agent to add THAT recommended
+      product to your cart too, quantity 1. End the conversation once both
+      items have been added.
+    expected_actions:
+      - search_products
+      - add_to_cart
+      - get_recommendations
+      - add_to_cart
+    domain: commerce
+    difficulty: hard
+    expected_order:
+      - search_products
+      - add_to_cart
+      - get_recommendations
+      - add_to_cart
+    expected_args:
+      add_to_cart:
+        customer_id: CUST-501
+        product_id: PROD-1003
+        quantity: 1
+      get_recommendations:
+        product_id: PROD-1001
+    expected_state:
+      carts:
+        CUST-501:
+          items:
+            _min_length: 3
+
+  - id: commerce_cart_021
+    instruction: |
+      You are customer CUST-501. Say exactly: "Please add 0 units of the
+      Smart Fitness Watch to my cart." If the agent questions the quantity or
+      asks you to clarify, say "Oh, never mind then, forget it" and end the
+      conversation. Do NOT ask the agent to add any positive quantity.
+    expected_actions: []
+    domain: commerce
+    difficulty: hard
+    # A quantity of 0 is nonsensical; the agent must not call add_to_cart with
+    # it — it should clarify or decline instead.
+    forbidden_args:
+      add_to_cart:
+        customer_id: CUST-501
+        quantity: 0
+    expected_response_contains:
+      - "re:quantity|how many|at least 1|clarify|zero"
+
+  - id: commerce_cart_022
+    instruction: |
+      You are customer CUST-502. Ask the agent to search for "speaker". Once
+      it shows you the matching product, ask it to add 2 units of that
+      product to your cart. When asked for your customer ID, provide
+      CUST-502. Then ask to see your cart and total. End the conversation
+      once you see the total.
+    expected_actions:
+      - search_products
+      - add_to_cart
+      - get_cart
+    domain: commerce
+    difficulty: hard
+    expected_order:
+      - search_products
+      - add_to_cart
+      - get_cart
+    expected_order_mode: exact
+    expected_args:
+      search_products:
+        query: {_contains: "speaker"}
+      add_to_cart:
+        customer_id: CUST-502
+        product_id: PROD-1003
+        quantity: 2
+    expected_state:
+      carts:
+        CUST-502:
+          total: 179.98
+    expected_response_contains:
+      - "179.98"

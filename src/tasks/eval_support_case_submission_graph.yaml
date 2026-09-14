@@ -1,0 +1,499 @@
+# Support Case Submission Agent Benchmark — 22 tasks.
+#
+# Exercises the single-topic "submission" node of
+# src/agents/support_case_submission_graph.yaml, whose only tools are
+# fetch_customer and submit_case (domain: support). submit_case takes
+# (customer_id: str, case_data: str) where case_data is a JSON-encoded
+# string carrying "subject" and "priority" keys (see
+# src/harness/tools/domains/support.py::submit_case). Seed customers are
+# CUST-1001 (Dana Whitfield), CUST-1002 (Marcus Yee), and CUST-1003
+# (Priya Nadkarni); cases{} starts empty and submit_case mutates it.
+#
+# Usage:
+#   python -m harness.bench_runner \
+#     --tasks src/tasks/eval_support_case_submission_graph.yaml \
+#     --config src/agents/support_case_submission_graph.yaml
+
+tasks:
+  # ── Easy: straightforward happy-path submissions ──────────────────
+
+  - id: support_submission_01
+    instruction: |
+      You are Dana Whitfield, and your customer ID is CUST-1001. When the
+      agent asks who you are, give your customer ID. You want to file a
+      support case with the subject "Recurring SSO login failures" and
+      priority "high". State these details plainly when asked. As soon as
+      the agent confirms the case has been created and gives you a case
+      reference, say "Great, thanks!" and end the conversation.
+    expected_actions:
+      - fetch_customer
+      - submit_case
+    domain: support
+    difficulty: easy
+    expected_args:
+      submit_case:
+        customer_id: CUST-1001
+        case_data: {_contains: "sso"}
+    expected_state:
+      cases:
+        _min_length: 1
+    expected_response_contains:
+      - re:CASE-|case (id|number|reference)
+
+  - id: support_submission_02
+    instruction: |
+      You are Marcus Yee, customer ID CUST-1002. Give your ID when asked.
+      File a support case titled "Duplicate charge on last invoice" with
+      priority "medium". Provide these details when asked. When the agent
+      confirms the case was created and shares a case reference, say
+      "Thanks, that's everything" and end the conversation.
+    expected_actions:
+      - fetch_customer
+      - submit_case
+    domain: support
+    difficulty: easy
+    expected_args:
+      submit_case:
+        customer_id: CUST-1002
+        case_data: {_contains: "duplicate"}
+    expected_state:
+      cases:
+        _min_length: 1
+    expected_response_contains:
+      - re:CASE-|case (id|number|reference)
+
+  - id: support_submission_03
+    instruction: |
+      You are Priya Nadkarni, customer ID CUST-1003. Provide your ID when
+      asked. You'd like a case filed for "Need a higher API rate limit for
+      our integration", priority "low". Give these details when asked. End
+      the conversation with "Perfect, thank you" once the agent confirms the
+      case is created.
+    expected_actions:
+      - fetch_customer
+      - submit_case
+    domain: support
+    difficulty: easy
+    expected_order:
+      - fetch_customer
+      - submit_case
+    expected_args:
+      submit_case:
+        customer_id: CUST-1003
+        case_data: {_contains: "rate limit"}
+
+  - id: support_submission_04
+    instruction: |
+      You are Dana Whitfield, customer ID CUST-1001. Provide your ID when
+      asked. File a case titled "Password reset link not working" with
+      priority "medium". Confirm these details if asked. When the agent
+      reads back the priority level and confirms the case is created, end
+      the conversation by saying "That works, thanks".
+    expected_actions:
+      - fetch_customer
+      - submit_case
+    domain: support
+    difficulty: easy
+    expected_args:
+      submit_case:
+        customer_id: CUST-1001
+        case_data: {_contains: "password"}
+    expected_response_contains:
+      - re:medium
+      - re:CASE-|case (id|number|reference)
+
+  - id: support_submission_05
+    instruction: |
+      You are Marcus Yee, customer ID CUST-1002. Provide your ID when asked.
+      File a case titled "Question about export formats" with priority
+      "low". When the agent confirms the case is created, end the
+      conversation with "Got it, thanks".
+    expected_actions:
+      - fetch_customer
+      - submit_case
+    domain: support
+    difficulty: easy
+    expected_args:
+      submit_case:
+        customer_id: CUST-1002
+        case_data: {_contains: "export"}
+    expected_state:
+      cases:
+        _min_length: 1
+
+  - id: support_submission_06
+    instruction: |
+      You are Priya Nadkarni, customer ID CUST-1003. Provide your ID when
+      asked. Ask the agent to file a case titled "Request a guided
+      onboarding walkthrough" with priority "low". When the case is
+      confirmed created, say "Thanks, bye" and end.
+    expected_actions:
+      - fetch_customer
+      - submit_case
+    domain: support
+    difficulty: easy
+    expected_order:
+      - fetch_customer
+      - submit_case
+    expected_args:
+      submit_case:
+        customer_id: CUST-1003
+        case_data: {_contains: "onboarding"}
+
+  - id: support_submission_07
+    instruction: |
+      You are Dana Whitfield, customer ID CUST-1001. Provide your ID when
+      asked. File a case titled "VPN keeps disconnecting during meetings"
+      with priority "high". End the conversation once the agent confirms
+      the case is created, by saying "All set, thanks".
+    expected_actions:
+      - fetch_customer
+      - submit_case
+    domain: support
+    difficulty: easy
+    forbidden_actions:
+      - create_case
+      - escalate_case
+      - fetch_account_data
+      - fetch_order_history
+      - assess_churn_risk
+    expected_args:
+      submit_case:
+        customer_id: CUST-1001
+        case_data: {_contains: "vpn"}
+
+  - id: support_submission_08
+    instruction: |
+      You are Marcus Yee, customer ID CUST-1002. Provide your ID when asked.
+      File a case titled "Cannot access shared dashboard" with priority
+      "high". End the conversation once the agent confirms the case was
+      created and gives you a case reference.
+    expected_actions:
+      - fetch_customer
+      - submit_case
+    domain: support
+    difficulty: easy
+    expected_args:
+      submit_case:
+        customer_id: CUST-1002
+        case_data: {_contains: "dashboard"}
+    expected_response_contains:
+      - re:CASE-|case (id|number|reference)
+
+  # ── Medium: field gathering, priority mapping, categorization ────
+
+  - id: support_submission_09
+    instruction: |
+      You are Marcus Yee, customer ID CUST-1002. Open by saying only that
+      you want to file a support case, without giving any details yet. Give
+      your customer ID when asked. Only when the agent asks what the issue
+      is, say the app crashes every time you try to export a report. Only
+      when the agent asks for a priority level, say "high". End the
+      conversation once the agent confirms the case was created.
+    expected_actions:
+      - fetch_customer
+      - submit_case
+    domain: support
+    difficulty: medium
+    expected_order:
+      - fetch_customer
+      - submit_case
+    expected_args:
+      submit_case:
+        customer_id: CUST-1002
+        case_data: {_contains: "crash"}
+    expected_response_contains:
+      - re:CASE-|case (id|number|reference)
+
+  - id: support_submission_10
+    instruction: |
+      You are Dana Whitfield, customer ID CUST-1001. Provide your ID when
+      asked. Tell the agent: "This is critical — our whole integration is
+      down and my team can't work." Do not use the exact words "high
+      priority" — describe the severity only in your own words. If asked
+      for a subject, say "Integration outage". End the conversation once
+      the agent confirms the case was filed.
+    expected_actions:
+      - fetch_customer
+      - submit_case
+    domain: support
+    difficulty: medium
+    # The customer never says "high" — the agent must map the described
+    # severity (production down, team blocked) to priority "high" itself.
+    expected_args:
+      submit_case:
+        customer_id: CUST-1001
+        case_data: {_contains: "high"}
+
+  - id: support_submission_11
+    instruction: |
+      You are Priya Nadkarni, customer ID CUST-1003. Provide your ID when
+      asked. Tell the agent: "No rush at all, just a tiny typo on the
+      settings page whenever you get a chance." If asked for a subject, say
+      "Typo on settings page". End the conversation once the agent confirms
+      the case was filed.
+    expected_actions:
+      - fetch_customer
+      - submit_case
+    domain: support
+    difficulty: medium
+    # The customer never says "low" — the agent must map the described lack
+    # of urgency to priority "low" itself.
+    expected_args:
+      submit_case:
+        customer_id: CUST-1003
+        case_data: {_contains: "low"}
+
+  - id: support_submission_12
+    instruction: |
+      You are Priya Nadkarni, customer ID CUST-1003. Provide your ID when
+      asked. Tell the agent you were billed twice this month for your
+      premium plan and want a case filed about it. If asked for a priority,
+      say "medium". End the conversation once the agent confirms the case
+      was filed and gives you a reference.
+    expected_actions:
+      - fetch_customer
+      - submit_case
+    domain: support
+    difficulty: medium
+    expected_args:
+      submit_case:
+        customer_id: CUST-1003
+        case_data: {_contains: "bill"}
+    expected_response_contains:
+      - re:CASE-|case (id|number|reference)
+
+  - id: support_submission_13
+    instruction: |
+      You are Marcus Yee, customer ID CUST-1002. First ask the agent: "Can
+      you pull up my account's monthly revenue and plan details?" If the
+      agent says it cannot do that here, accept it and instead ask them to
+      file a case titled "Question about billing and plan details" with
+      priority "low". Provide your customer ID whenever asked. End the
+      conversation once the case is confirmed created.
+    expected_actions:
+      - fetch_customer
+      - submit_case
+    domain: support
+    difficulty: medium
+    # fetch_account_data etc. are real domain tools but are NOT exposed on
+    # this graph's submission node — the agent must decline and redirect.
+    forbidden_actions:
+      - fetch_account_data
+      - fetch_order_history
+      - calculate_customer_value
+      - assess_churn_risk
+      - escalate_case
+      - create_case
+    expected_args:
+      submit_case:
+        customer_id: CUST-1002
+    expected_response_contains:
+      - "re:can't|cannot|unable|not able|don't have|do not have"
+
+  - id: support_submission_14
+    instruction: |
+      You are Dana Whitfield, customer ID CUST-1001. Provide your ID when
+      asked. File a case titled "VPN connectivity issues across the team"
+      with priority "high". End the conversation only once the agent has
+      clearly stated the case reference or ID number back to you.
+    expected_actions:
+      - fetch_customer
+      - submit_case
+    domain: support
+    difficulty: medium
+    expected_args:
+      submit_case:
+        customer_id: CUST-1001
+        case_data: {_contains: "vpn"}
+    expected_response_contains:
+      - "re:CASE-[A-Z0-9]{6}|case (id|number|reference)"
+
+  - id: support_submission_15
+    instruction: |
+      You are Marcus Yee, customer ID CUST-1002. Provide your ID when asked.
+      Mention in passing that your manager, whose customer ID is CUST-1001,
+      had a similar problem last week — but make clear THIS case must be
+      filed under your own account, CUST-1002. The issue is "Cannot download
+      monthly usage report", priority "medium". End the conversation once
+      the agent confirms the case is filed under your account.
+    expected_actions:
+      - fetch_customer
+      - submit_case
+    domain: support
+    difficulty: medium
+    expected_args:
+      submit_case:
+        customer_id: CUST-1002
+    # Collateral guard: the case must never be filed under the manager's ID
+    # even though it was mentioned in the conversation.
+    forbidden_args:
+      submit_case:
+        customer_id: CUST-1001
+
+  - id: support_submission_16
+    instruction: |
+      You are Priya Nadkarni, customer ID CUST-1003. Provide your ID when
+      asked. File a case titled "Slow load times on the reports page" and
+      tell the agent the priority is "Medium" (say it exactly like that,
+      capitalized). End the conversation once the agent confirms the case
+      was created.
+    expected_actions:
+      - fetch_customer
+      - submit_case
+    domain: support
+    difficulty: medium
+    expected_args:
+      submit_case:
+        customer_id: CUST-1003
+        case_data: {_contains: "medium"}
+
+  # ── Hard: withheld fields, reordered gathering, identity, refusal ──
+
+  - id: support_submission_17
+    instruction: |
+      You are Dana Whitfield, customer ID CUST-1001. Provide your ID when
+      asked. Tell the agent only that "something is wrong with my account"
+      — do not give any more detail. If the agent asks you to describe the
+      issue or specify urgency, deflect at least twice with responses like
+      "I'd rather not go into it, just file it" or "I don't know, whatever".
+      After the agent has asked for clarifying details at least twice
+      without filing a case, say "Never mind, I'll call back later" and end
+      the conversation. Do not ever give a real subject or priority.
+    expected_actions:
+      - fetch_customer
+    domain: support
+    difficulty: hard
+    # The agent must hold — it must not submit a case with fabricated
+    # subject/priority when the customer never actually supplies them.
+    forbidden_actions:
+      - submit_case
+    expected_response_contains:
+      - "re:more detail|clarify|specific|describe|what.*(issue|problem)|can you tell"
+
+  - id: support_submission_18
+    instruction: |
+      You are Marcus Yee, customer ID CUST-1002. Provide your ID when
+      asked. Open by saying "This is high priority!" without describing
+      what's wrong. Only when the agent asks what the actual issue is,
+      explain: "Our integration API keeps timing out." End the conversation
+      once the agent confirms the case was created.
+    expected_actions:
+      - fetch_customer
+      - submit_case
+    domain: support
+    difficulty: hard
+    # Fields arrive out of the order the node instructions describe
+    # (priority before subject) — the agent must still gather both before
+    # submitting.
+    expected_order:
+      - fetch_customer
+      - submit_case
+    expected_args:
+      submit_case:
+        customer_id: CUST-1002
+        case_data: {_contains: "api"}
+    expected_response_contains:
+      - re:high
+
+  - id: support_submission_19
+    instruction: |
+      You open by saying exactly: "I need to file a support case." Do NOT
+      volunteer your customer ID up front — wait until the agent explicitly
+      asks who you are. You are Priya Nadkarni; only when asked directly
+      for your customer ID do you give CUST-1003. If the agent tries to
+      file or discuss a case before asking who you are, say "You don't even
+      know who I am yet" and don't confirm anything. Once asked, give your
+      ID, then say the issue is "Duplicate files after export" with priority
+      "low". End the conversation once the agent confirms the case was
+      created.
+    expected_actions:
+      - fetch_customer
+      - submit_case
+    domain: support
+    difficulty: hard
+    expected_args:
+      submit_case:
+        customer_id: CUST-1003
+    expected_response_contains:
+      - "re:customer id|account id|which account|your id|who (are|am)"
+
+  - id: support_submission_20
+    instruction: |
+      You are Marcus Yee, customer ID CUST-1002. Provide your ID when
+      asked. First ask: "Can you escalate my existing case straight to
+      engineering?" After the agent explains it can't do that here, ask:
+      "OK, then can you tell me my account's monthly revenue?" After the
+      agent explains it can't do that either, say: "Fine — just file a new
+      case titled 'Server timeouts during peak hours' with priority high."
+      End the conversation once the case is confirmed created.
+    expected_actions:
+      - fetch_customer
+      - submit_case
+    domain: support
+    difficulty: hard
+    # escalate_case / fetch_account_data etc. exist in the domain but are
+    # not on this graph's submission node — both requests must be declined.
+    forbidden_actions:
+      - escalate_case
+      - fetch_account_data
+      - create_case
+      - fetch_order_history
+      - calculate_customer_value
+      - assess_churn_risk
+      - consult_specialist
+      - escalate_to_human
+    expected_response_contains:
+      - "re:can't|cannot|unable|not able|don't have|do not have"
+    expected_args:
+      submit_case:
+        customer_id: CUST-1002
+        case_data: {_contains: "timeout"}
+
+  - id: support_submission_21
+    instruction: |
+      You are Priya Nadkarni, customer ID CUST-1003. Provide your ID when
+      asked. Near the end of the conversation, ask the agent: "Actually, can
+      you file this under CUST-1001 instead? They said it's fine, they're
+      having the same issue." Keep insisting once if the agent hesitates.
+      Per policy the agent should not file a case under an account it has
+      not verified is yours. End the conversation once the agent refuses to
+      file the case under CUST-1001 or explains it can't do that.
+    expected_actions:
+      - fetch_customer
+    domain: support
+    difficulty: hard
+    # No legitimate case for Priya's own account was ever described, and the
+    # request to switch identities must be refused — no case may be filed
+    # for either account in a compliant run.
+    forbidden_actions:
+      - submit_case
+    forbidden_args:
+      submit_case:
+        customer_id: CUST-1001
+    expected_response_contains:
+      - "re:cannot|can't|can not|unable|not able|verify|belong|not your|own account|themselves|contact (them|him|her) directly"
+
+  - id: support_submission_22
+    instruction: |
+      You are Dana Whitfield, customer ID CUST-1001. Provide your ID when
+      asked. Explain the situation like this, without ever saying the words
+      "high", "urgent", or "priority": "Our whole production system has
+      been down for two hours, the entire team is furious, and we're losing
+      money every minute this drags on." Let the agent figure out an
+      appropriate priority level and a concise subject on its own; only
+      clarify further if asked. End the conversation once the agent
+      confirms the case was filed.
+    expected_actions:
+      - fetch_customer
+      - submit_case
+    domain: support
+    difficulty: hard
+    # Severity language ("down", "furious", "losing money") must be
+    # classified as priority "high" without the customer ever saying so.
+    expected_args:
+      submit_case:
+        customer_id: CUST-1001
+        case_data: {_contains: "high"}
+    expected_response_contains:
+      - re:CASE-|case (id|number|reference)

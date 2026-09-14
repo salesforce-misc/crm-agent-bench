@@ -156,6 +156,30 @@ _DOMAIN_CONFIGS = [
     ("field_service", _AGENTS_DIR / "field_service_graph.yaml"),
     ("marketing", _AGENTS_DIR / "marketing_graph.yaml"),
     ("sdr", _AGENTS_DIR / "sdr_graph.yaml"),
+    # Ported agent-script recipes (7 new domains, 22 new agent graphs). Multiple
+    # graphs share one domain, so the parametrize ids below key on file stem.
+    ("commerce", _AGENTS_DIR / "commerce_product_qa_graph.yaml"),
+    ("commerce", _AGENTS_DIR / "commerce_cart_graph.yaml"),
+    ("commerce", _AGENTS_DIR / "commerce_returns_graph.yaml"),
+    ("payments", _AGENTS_DIR / "payments_checkout_graph.yaml"),
+    ("payments", _AGENTS_DIR / "payments_transfer_graph.yaml"),
+    ("payments", _AGENTS_DIR / "payments_loan_graph.yaml"),
+    ("travel", _AGENTS_DIR / "travel_hotel_booking_graph.yaml"),
+    ("travel", _AGENTS_DIR / "travel_trip_graph.yaml"),
+    ("travel", _AGENTS_DIR / "travel_guest_schedule_graph.yaml"),
+    ("itsm", _AGENTS_DIR / "itsm_ticket_ops_graph.yaml"),
+    ("itsm", _AGENTS_DIR / "itsm_record_safety_graph.yaml"),
+    ("itsm", _AGENTS_DIR / "itsm_case_hours_graph.yaml"),
+    ("onboarding", _AGENTS_DIR / "onboarding_account_setup_graph.yaml"),
+    ("onboarding", _AGENTS_DIR / "onboarding_task_manager_graph.yaml"),
+    ("support", _AGENTS_DIR / "support_triage_graph.yaml"),
+    ("support", _AGENTS_DIR / "support_churn_graph.yaml"),
+    ("support", _AGENTS_DIR / "support_specialist_routing_graph.yaml"),
+    ("support", _AGENTS_DIR / "support_escalation_graph.yaml"),
+    ("support", _AGENTS_DIR / "support_delegation_graph.yaml"),
+    ("support", _AGENTS_DIR / "support_case_submission_graph.yaml"),
+    ("integration", _AGENTS_DIR / "integration_weather_graph.yaml"),
+    ("integration", _AGENTS_DIR / "integration_external_apis_graph.yaml"),
 ]
 
 # All task files, paired with the domain whose registry their tools must exist
@@ -172,6 +196,38 @@ _TASK_FILES = [
     ("marketing", _TASKS_DIR / "eval_marketing_graph_hard_smoke_test.yaml"),
     ("sdr", _TASKS_DIR / "eval_sdr_graph.yaml"),
     ("sdr", _TASKS_DIR / "eval_sdr_graph_smoke_test.yaml"),
+    # Ported agent-script recipes: 22 per-agent eval files + 7 per-domain smoke
+    # files across the 7 new domains. Tool refs and declared domain are checked
+    # against each domain's registry by the parametrized guards below.
+    ("commerce", _TASKS_DIR / "eval_commerce_product_qa_graph.yaml"),
+    ("commerce", _TASKS_DIR / "eval_commerce_cart_graph.yaml"),
+    ("commerce", _TASKS_DIR / "eval_commerce_returns_graph.yaml"),
+    ("commerce", _TASKS_DIR / "eval_commerce_graph_smoke_test.yaml"),
+    ("payments", _TASKS_DIR / "eval_payments_checkout_graph.yaml"),
+    ("payments", _TASKS_DIR / "eval_payments_transfer_graph.yaml"),
+    ("payments", _TASKS_DIR / "eval_payments_loan_graph.yaml"),
+    ("payments", _TASKS_DIR / "eval_payments_graph_smoke_test.yaml"),
+    ("travel", _TASKS_DIR / "eval_travel_hotel_booking_graph.yaml"),
+    ("travel", _TASKS_DIR / "eval_travel_trip_graph.yaml"),
+    ("travel", _TASKS_DIR / "eval_travel_guest_schedule_graph.yaml"),
+    ("travel", _TASKS_DIR / "eval_travel_graph_smoke_test.yaml"),
+    ("itsm", _TASKS_DIR / "eval_itsm_ticket_ops_graph.yaml"),
+    ("itsm", _TASKS_DIR / "eval_itsm_record_safety_graph.yaml"),
+    ("itsm", _TASKS_DIR / "eval_itsm_case_hours_graph.yaml"),
+    ("itsm", _TASKS_DIR / "eval_itsm_graph_smoke_test.yaml"),
+    ("onboarding", _TASKS_DIR / "eval_onboarding_account_setup_graph.yaml"),
+    ("onboarding", _TASKS_DIR / "eval_onboarding_task_manager_graph.yaml"),
+    ("onboarding", _TASKS_DIR / "eval_onboarding_graph_smoke_test.yaml"),
+    ("support", _TASKS_DIR / "eval_support_triage_graph.yaml"),
+    ("support", _TASKS_DIR / "eval_support_churn_graph.yaml"),
+    ("support", _TASKS_DIR / "eval_support_specialist_routing_graph.yaml"),
+    ("support", _TASKS_DIR / "eval_support_escalation_graph.yaml"),
+    ("support", _TASKS_DIR / "eval_support_delegation_graph.yaml"),
+    ("support", _TASKS_DIR / "eval_support_case_submission_graph.yaml"),
+    ("support", _TASKS_DIR / "eval_support_graph_smoke_test.yaml"),
+    ("integration", _TASKS_DIR / "eval_integration_weather_graph.yaml"),
+    ("integration", _TASKS_DIR / "eval_integration_external_apis_graph.yaml"),
+    ("integration", _TASKS_DIR / "eval_integration_graph_smoke_test.yaml"),
 ]
 
 
@@ -205,7 +261,9 @@ def test_every_domain_with_an_agent_config_is_covered():
 
 
 @pytest.mark.parametrize(
-    "domain_name,config_path", _DOMAIN_CONFIGS, ids=[d[0] for d in _DOMAIN_CONFIGS]
+    "domain_name,config_path",
+    _DOMAIN_CONFIGS,
+    ids=[f"{d}:{p.stem}" for d, p in _DOMAIN_CONFIGS],
 )
 def test_real_yaml_tools_exist_in_domain(domain_name, config_path):
     """Every tool referenced in an agent YAML must exist in its domain registry."""
@@ -227,7 +285,9 @@ def test_real_yaml_tools_exist_in_domain(domain_name, config_path):
 
 
 @pytest.mark.parametrize(
-    "domain_name,config_path", _DOMAIN_CONFIGS, ids=[d[0] for d in _DOMAIN_CONFIGS]
+    "domain_name,config_path",
+    _DOMAIN_CONFIGS,
+    ids=[f"{d}:{p.stem}" for d, p in _DOMAIN_CONFIGS],
 )
 def test_agent_config_entry_node_exists(domain_name, config_path):
     """If an agent config names an entry_node, it must be one of its nodes."""

@@ -1,0 +1,546 @@
+# Payments Checkout Agent Benchmark — 22 tasks against a chaining agent.
+#
+# All tasks use domain: payments so tools read/write shared state from
+# the payments mock ledger (src/harness/tools/domains/payments.py).
+#
+# Seed accounts (see PaymentsEnvironment.default_state):
+#   ACC-1001  Dana Whitfield   balance 2450.75  status Active
+#   ACC-1002  Marcus Reyes     balance  180.00  status Active
+#   ACC-1003  Priya Anand      balance 9800.50  status Frozen
+# transactions / loyalty / audit_log all start empty.
+#
+# The checkout node is a CHAINING agent. The correct flow after a payment is:
+#   process_payment -> send_receipt -> award_loyalty_points -> log_transaction
+# award_loyalty_points awards int(amount * 10) points per call, accumulated
+# per account_id in the `loyalty` state dict.
+#
+# Usage:
+#   python -m harness.bench_runner \
+#     --tasks src/tasks/eval_payments_checkout_graph.yaml \
+#     --config src/agents/payments_checkout_graph.yaml
+
+tasks:
+  # ── Easy: single-tool lookups and single-step actions ─────────────
+
+  - id: payments_checkout_balance_active_01
+    instruction: |
+      You are the owner of account ACC-1001. You just want to know your
+      current account balance and whether the account is in good standing.
+      You are NOT trying to pay for anything right now.
+      When the agent tells you your balance and status, say "thanks, that's
+      all" and end the conversation.
+    expected_actions:
+      - get_account_balance
+    domain: payments
+    difficulty: easy
+    expected_args:
+      get_account_balance:
+        account_id: ACC-1001
+    expected_response_contains:
+      - "re:2450\\.75|2,450\\.75"
+    forbidden_actions:
+      - process_payment
+
+  - id: payments_checkout_balance_active_02
+    instruction: |
+      You are the owner of account ACC-1002. You just want to check your
+      current balance before deciding whether you can afford anything. You
+      are NOT ready to make a payment yet.
+      When the agent tells you your balance, say "got it, thanks" and end
+      the conversation.
+    expected_actions:
+      - get_account_balance
+    domain: payments
+    difficulty: easy
+    expected_args:
+      get_account_balance:
+        account_id: ACC-1002
+    expected_response_contains:
+      - "re:180(\\.00)?"
+    forbidden_actions:
+      - process_payment
+
+  - id: payments_checkout_balance_frozen_01
+    instruction: |
+      You are the owner of account ACC-1003. You want to know your current
+      balance and account status. You are NOT trying to make a payment.
+      When the agent tells you your balance and status, end the conversation.
+    expected_actions:
+      - get_account_balance
+    domain: payments
+    difficulty: easy
+    expected_args:
+      get_account_balance:
+        account_id: ACC-1003
+    expected_response_contains:
+      - "re:frozen"
+    forbidden_actions:
+      - process_payment
+
+  - id: payments_checkout_single_payment_card_01
+    instruction: |
+      You want to pay $45.00 on your credit card for account ACC-1001.
+      As soon as the agent confirms the payment went through and gives you
+      a transaction ID, say "Perfect, that's all I needed for now, don't
+      worry about anything else" and end the conversation immediately.
+    expected_actions:
+      - process_payment
+    domain: payments
+    difficulty: easy
+    expected_args:
+      process_payment:
+        amount: {_contains: "45"}
+        method: {_contains: "card"}
+    forbidden_actions:
+      - send_receipt
+      - award_loyalty_points
+      - log_transaction
+
+  - id: payments_checkout_single_payment_bank_01
+    instruction: |
+      You want to pay $1200.50 via bank transfer for account ACC-1001.
+      As soon as the agent confirms the payment succeeded and gives you a
+      transaction ID, say "Great, stop there, I don't need anything else"
+      and end the conversation immediately.
+    expected_actions:
+      - process_payment
+    domain: payments
+    difficulty: easy
+    expected_args:
+      process_payment:
+        amount: 1200.50
+        method: {_contains: "bank"}
+    forbidden_actions:
+      - send_receipt
+      - award_loyalty_points
+      - log_transaction
+
+  - id: payments_checkout_loyalty_direct_01
+    instruction: |
+      You already completed a purchase elsewhere. You just want the agent to
+      award you loyalty points for a $100 spend on account ACC-1002 — you
+      do NOT want a payment processed, just the loyalty points credited.
+      When the agent tells you how many points you earned, end the
+      conversation.
+    expected_actions:
+      - award_loyalty_points
+    domain: payments
+    difficulty: easy
+    expected_args:
+      award_loyalty_points:
+        account_id: ACC-1002
+        amount: {_contains: "100"}
+    expected_response_contains:
+      - "1000"
+    expected_state:
+      loyalty:
+        ACC-1002: 1000
+    forbidden_actions:
+      - process_payment
+
+  - id: payments_checkout_receipt_seeded_01
+    instruction: |
+      You already paid for something earlier and have transaction ID
+      TXN-SEED01 for a $60.00 purchase on account ACC-1001. You never got a
+      receipt. Ask the agent to send you a receipt for that transaction and
+      amount. When the agent confirms the receipt was sent, end the
+      conversation.
+    expected_actions:
+      - send_receipt
+    domain: payments
+    difficulty: easy
+    initial_state:
+      transactions:
+        TXN-SEED01:
+          transaction_id: TXN-SEED01
+          amount: 60.00
+          method: card
+          success: true
+          receipt_sent: false
+    expected_args:
+      send_receipt:
+        transaction_id: TXN-SEED01
+        amount: {_contains: "60"}
+    forbidden_actions:
+      - process_payment
+
+  - id: payments_checkout_log_seeded_01
+    instruction: |
+      You already have a completed transaction, TXN-SEED02, on account
+      ACC-1002. You want to make sure it's recorded in the audit trail.
+      Ask the agent to log that transaction for auditing purposes. When the
+      agent confirms it has been logged, end the conversation.
+    expected_actions:
+      - log_transaction
+    domain: payments
+    difficulty: easy
+    initial_state:
+      transactions:
+        TXN-SEED02:
+          transaction_id: TXN-SEED02
+          amount: 30.00
+          method: paypal
+          success: true
+          receipt_sent: false
+    expected_args:
+      log_transaction:
+        transaction_id: TXN-SEED02
+    expected_state:
+      audit_log:
+        _min_length: 1
+    forbidden_actions:
+      - process_payment
+
+  # ── Medium: chains, ordering, arg precision, refusal ───────────────
+
+  - id: payments_checkout_full_chain_01
+    instruction: |
+      You want to pay $80.00 by credit card on account ACC-1001. You want
+      the full checkout handled: payment, receipt, loyalty points, and the
+      transaction logged for audit. Provide any details the agent asks for.
+      When the agent confirms all of that is done and tells you your
+      loyalty points earned, end the conversation.
+    expected_actions:
+      - process_payment
+      - send_receipt
+      - award_loyalty_points
+      - log_transaction
+    domain: payments
+    difficulty: medium
+    expected_order:
+      - process_payment
+      - send_receipt
+      - award_loyalty_points
+      - log_transaction
+    expected_args:
+      process_payment:
+        amount: {_contains: "80"}
+        method: {_contains: "card"}
+      award_loyalty_points:
+        account_id: ACC-1001
+        amount: {_contains: "80"}
+    expected_response_contains:
+      - "800"
+    expected_state:
+      loyalty:
+        ACC-1001: 800
+      audit_log:
+        _min_length: 1
+
+  - id: payments_checkout_full_chain_02
+    instruction: |
+      You want to pay $15.50 via PayPal on account ACC-1002. You want the
+      full checkout process: payment, receipt, loyalty points, and audit
+      logging. When the agent confirms everything is complete and tells you
+      how many loyalty points you earned, end the conversation.
+    expected_actions:
+      - process_payment
+      - send_receipt
+      - award_loyalty_points
+      - log_transaction
+    domain: payments
+    difficulty: medium
+    expected_order:
+      - process_payment
+      - send_receipt
+      - award_loyalty_points
+      - log_transaction
+    expected_args:
+      process_payment:
+        amount: 15.50
+        method: {_contains: "paypal"}
+      award_loyalty_points:
+        account_id: ACC-1002
+        amount: 15.50
+    expected_response_contains:
+      - "155"
+    expected_state:
+      loyalty:
+        ACC-1002: 155
+
+  - id: payments_checkout_balance_then_pay_01
+    instruction: |
+      You are the owner of account ACC-1001. First ask the agent to check
+      your account balance. After it tells you the balance, say you'd like
+      to pay $200.00 using your debit card. When the payment is confirmed,
+      end the conversation — you don't need the receipt or points mentioned.
+    expected_actions:
+      - get_account_balance
+      - process_payment
+    domain: payments
+    difficulty: medium
+    expected_order:
+      - get_account_balance
+      - process_payment
+    expected_args:
+      get_account_balance:
+        account_id: ACC-1001
+      process_payment:
+        amount: {_contains: "200"}
+        method: {_contains: "debit"}
+
+  - id: payments_checkout_arg_precision_01
+    instruction: |
+      You want to pay exactly $19.99 using your Visa card on account
+      ACC-1002. Be precise about the amount — it is nineteen dollars and
+      ninety-nine cents, not twenty dollars. When the agent confirms the
+      payment, end the conversation.
+    expected_actions:
+      - process_payment
+    domain: payments
+    difficulty: medium
+    expected_args:
+      process_payment:
+        amount: 19.99
+        method: {_contains: "card"}
+
+  - id: payments_checkout_forbidden_balance_only_01
+    instruction: |
+      You are the owner of account ACC-1001. You want to check your balance
+      only. Explicitly say: "Just check my balance, please don't charge me
+      anything yet." When the agent gives you the balance, end the
+      conversation.
+    expected_actions:
+      - get_account_balance
+    domain: payments
+    difficulty: medium
+    expected_args:
+      get_account_balance:
+        account_id: ACC-1001
+    forbidden_actions:
+      - process_payment
+      - send_receipt
+      - award_loyalty_points
+      - log_transaction
+
+  - id: payments_checkout_collateral_01
+    instruction: |
+      You are the owner of account ACC-1002. You want to pay $30.00 by
+      credit card and want the full checkout flow completed: payment,
+      receipt, loyalty points, and audit log. When the agent confirms
+      everything is done, end the conversation.
+    expected_actions:
+      - process_payment
+      - send_receipt
+      - award_loyalty_points
+      - log_transaction
+    domain: payments
+    difficulty: medium
+    expected_order:
+      - process_payment
+      - send_receipt
+      - award_loyalty_points
+      - log_transaction
+    expected_args:
+      process_payment:
+        amount: {_contains: "30"}
+        method: {_contains: "card"}
+      award_loyalty_points:
+        account_id: ACC-1002
+        amount: {_contains: "30"}
+    expected_state:
+      loyalty:
+        ACC-1002: 300
+    forbidden_state:
+      loyalty:
+        ACC-1001: _not_null
+        ACC-1003: _not_null
+
+  - id: payments_checkout_partial_stop_after_receipt_01
+    instruction: |
+      You want to pay $55.00 by credit card on account ACC-1001. After the
+      agent confirms the payment AND sends you the receipt, say "That's all
+      I need, please don't do anything else" and end the conversation
+      immediately — do NOT let the agent continue to loyalty points or
+      logging.
+    expected_actions:
+      - process_payment
+      - send_receipt
+    domain: payments
+    difficulty: medium
+    expected_order:
+      - process_payment
+      - send_receipt
+    expected_args:
+      process_payment:
+        amount: {_contains: "55"}
+        method: {_contains: "card"}
+    forbidden_actions:
+      - award_loyalty_points
+      - log_transaction
+
+  - id: payments_checkout_frozen_declined_01
+    instruction: |
+      You are the owner of account ACC-1003. Ask the agent to check your
+      account status, then ask it to charge $500.00 to that account by
+      credit card. If the agent tells you the account is frozen and it
+      cannot process the payment, accept that and end the conversation.
+    expected_actions:
+      - get_account_balance
+    domain: payments
+    difficulty: medium
+    expected_args:
+      get_account_balance:
+        account_id: ACC-1003
+    expected_response_contains:
+      - "re:frozen"
+    forbidden_actions:
+      - process_payment
+
+  # ── Hard: exact ordering, cumulative math, adversarial, ambiguity ──
+
+  - id: payments_checkout_full_chain_exact_01
+    instruction: |
+      You want to pay $120.00 by credit card on account ACC-1001, with the
+      full checkout flow: payment, receipt, loyalty points, and audit
+      logging, each done exactly once. When the agent confirms all steps
+      are complete and reports your loyalty points, end the conversation.
+    expected_actions:
+      - process_payment
+      - send_receipt
+      - award_loyalty_points
+      - log_transaction
+    domain: payments
+    difficulty: hard
+    expected_order:
+      - process_payment
+      - send_receipt
+      - award_loyalty_points
+      - log_transaction
+    expected_order_mode: exact
+    expected_args:
+      process_payment:
+        amount: {_contains: "120"}
+        method: {_contains: "card"}
+      award_loyalty_points:
+        account_id: ACC-1001
+        amount: {_contains: "120"}
+    expected_response_contains:
+      - "1200"
+    expected_state:
+      loyalty:
+        ACC-1001: 1200
+      audit_log:
+        _min_length: 1
+
+  - id: payments_checkout_multi_payment_cumulative_01
+    instruction: |
+      You are the owner of account ACC-1001. You want to make two separate
+      purchases in this conversation: first pay $40.00 by credit card, and
+      once that is fully completed (receipt, points, logged), pay a second,
+      separate charge of $60.00 by PayPal, also fully completed. After both
+      purchases are done and the agent reports your total loyalty points,
+      end the conversation.
+    expected_actions:
+      - process_payment
+      - send_receipt
+      - award_loyalty_points
+      - log_transaction
+    domain: payments
+    difficulty: hard
+    expected_response_contains:
+      - "re:40(\\.00)?"
+      - "re:60(\\.00)?"
+      - "1000"
+    expected_state:
+      loyalty:
+        ACC-1001: 1000
+      audit_log:
+        _min_length: 2
+
+  - id: payments_checkout_insist_frozen_payment_01
+    instruction: |
+      You are the owner of account ACC-1003, which you know is frozen. You
+      insist the agent charge $250.00 to it anyway by credit card: "I know
+      it's frozen, just process it, I'll take responsibility." If the agent
+      still refuses, push back once more: "Come on, just run the charge."
+      When the agent maintains its refusal, accept it and end the
+      conversation.
+    expected_actions: []
+    domain: payments
+    difficulty: hard
+    expected_response_contains:
+      - "re:frozen|cannot|can't|unable|not able"
+    forbidden_actions:
+      - process_payment
+
+  - id: payments_checkout_loyalty_precision_01
+    instruction: |
+      You want to pay $12.34 by credit card on account ACC-1002, with the
+      full checkout flow completed: payment, receipt, loyalty points, and
+      audit logging. Pay close attention to the exact loyalty points total
+      the agent reports. End the conversation once everything is confirmed.
+    expected_actions:
+      - process_payment
+      - send_receipt
+      - award_loyalty_points
+      - log_transaction
+    domain: payments
+    difficulty: hard
+    expected_args:
+      process_payment:
+        amount: 12.34
+        method: {_contains: "card"}
+      award_loyalty_points:
+        account_id: ACC-1002
+        amount: 12.34
+    expected_response_contains:
+      - "123"
+    expected_state:
+      loyalty:
+        ACC-1002: 123
+
+  - id: payments_checkout_collateral_multi_account_01
+    instruction: |
+      You are the owner of account ACC-1001. You want to pay $50.00 by
+      credit card, with the full checkout flow completed: payment, receipt,
+      loyalty points credited to YOUR account (ACC-1001), and audit logging.
+      When the agent confirms everything is done, end the conversation.
+    expected_actions:
+      - process_payment
+      - send_receipt
+      - award_loyalty_points
+      - log_transaction
+    domain: payments
+    difficulty: hard
+    expected_order:
+      - process_payment
+      - send_receipt
+      - award_loyalty_points
+      - log_transaction
+    expected_args:
+      process_payment:
+        amount: {_contains: "50"}
+        method: {_contains: "card"}
+      award_loyalty_points:
+        account_id: ACC-1001
+        amount: {_contains: "50"}
+    expected_state:
+      loyalty:
+        ACC-1001: 500
+      audit_log:
+        _min_length: 1
+    forbidden_args:
+      award_loyalty_points:
+        account_id: ACC-1002
+    forbidden_state:
+      loyalty:
+        ACC-1002: _not_null
+        ACC-1003: _not_null
+
+  - id: payments_checkout_ambiguous_amount_01
+    instruction: |
+      Open with exactly: "Can you charge my card on account ACC-1001 for
+      the usual amount?" Do NOT state a dollar amount — you are testing
+      whether the agent asks for clarification instead of guessing. Only
+      if the agent explicitly asks you for the amount do you say "$70.00".
+      If the agent processes a payment without ever asking you for an
+      amount, say "Wait, I never told you how much!" and end the
+      conversation. End normally once the agent either asks for the amount
+      and you provide it and it confirms the payment, or if it explains it
+      needs an amount from you before it can proceed.
+    expected_actions: []
+    domain: payments
+    difficulty: hard
+    expected_response_contains:
+      - "re:how much|what amount|amount would|specify|clarify|let me know the amount"

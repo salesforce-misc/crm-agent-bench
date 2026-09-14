@@ -1,0 +1,56 @@
+# Integration Agent Smoke Test — 3 quick tasks for validation.
+#
+# Usage:
+#   python -m harness.bench_runner \
+#     --tasks src/tasks/eval_integration_graph_smoke_test.yaml \
+#     --config src/agents/integration_weather_graph.yaml
+
+tasks:
+- id: smoke_integration_weather_01
+  instruction: 'You want to know the current weather in San Francisco. Ask the agent
+
+    directly. As soon as it tells you the temperature or conditions,
+
+    say "thanks, that''s all" and end the conversation.
+
+    '
+  domain: integration
+  expected_actions:
+  - get_current_weather
+  expected_args:
+    get_current_weather:
+      city: San Francisco
+  expected_response_contains:
+  - re:62|foggy
+- id: smoke_integration_weather_02
+  instruction: 'You want to know the current weather conditions in Phoenix right now.
+
+    Ask the agent directly. Once it gives you the temperature or
+
+    conditions, say "got it, thanks" and end the conversation.
+
+    '
+  domain: integration
+  expected_actions:
+  - get_current_weather
+  expected_args:
+    get_current_weather:
+      city: Phoenix
+  expected_response_contains:
+  - re:104|sunny
+- id: smoke_integration_weather_03
+  instruction: 'You want to know what the weather is like right now in Miami. Ask the
+
+    agent directly. Once it reports the temperature or conditions, say
+
+    "perfect, thank you" and end the conversation.
+
+    '
+  domain: integration
+  expected_actions:
+  - get_current_weather
+  expected_args:
+    get_current_weather:
+      city: Miami
+  expected_response_contains:
+  - re:89|thunderstorm
