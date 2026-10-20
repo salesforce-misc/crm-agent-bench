@@ -1,0 +1,42 @@
+# Marketing Agent Smoke Test — 3 quick tasks for validation.
+#
+# Usage:
+#   python -m harness.bench_runner \
+#     --tasks tests/fixtures/tasks/eval_marketing_graph_smoke_test.yaml \
+#     --config src/agents/marketing.yaml
+
+tasks:
+  - id: smoke_campaign_roi_01
+    instruction: |
+      You are Emily Carter, email emily.carter@example.com.
+      You want to know the ROI of campaign MA-002. When asked for your
+      email or campaign ID, provide them.
+      When the agent provides the ROI, end the conversation.
+    expected_actions:
+      - MA_Get_ROI_A_Of_Campaign
+    domain: marketing
+
+  - id: smoke_engagement_01
+    instruction: |
+      You are Emily Carter, email emily.carter@example.com.
+      You want to see the most engaged customers for campaign MA-001.
+      When asked for details, provide them.
+      When the agent shows you the customer list, end the conversation.
+    expected_actions:
+      - MA_Get_Most_or_Least_Engaged_Customer_List
+    domain: marketing
+
+  - id: smoke_create_campaign_01
+    instruction: |
+      You are Emily Carter, email emily.carter@example.com.
+      Create a campaign called "Summer Re-Engage" targeting the least
+      engaged customers from campaign MA-001. Description: "Win back
+      inactive users". Start: June 1, 2025. End: July 15, 2025.
+      When asked for details, provide them.
+      When the agent confirms creation, end the conversation.
+    expected_actions:
+      - MA_Create_A_Campaign_With_Most_or_Least_Engaged_Customers
+    domain: marketing
+    expected_state:
+      created_campaigns:
+        _min_length: 1

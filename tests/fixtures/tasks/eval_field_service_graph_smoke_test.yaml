@@ -1,0 +1,50 @@
+# Field Service Smoke test — 3 tasks (incl. 1 state-mutation) for fast validation.
+#
+# Usage:
+#   python -m harness.bench_runner \
+#     --tasks tests/fixtures/tasks/eval_field_service_graph_smoke_test.yaml \
+#     --config src/agents/field_service.yaml
+
+tasks:
+  - id: smoke_faq_walk_in_01
+    instruction: |
+      You are a customer. Ask the agent whether you need to book an
+      appointment or can walk in for service.
+      When the agent provides information about walk-in hours and
+      appointment recommendations, end the conversation.
+    expected_actions:
+      - FSA_Knowledge_FAQ
+    domain: field_service
+
+  - id: smoke_tech_troubleshoot_overheating_01
+    instruction: |
+      You are a technician. Your email is indranil.sengupta@example.com.
+      Provide your email upfront and ask how to troubleshoot an overheating
+      processor.
+      When the agent provides cooling system and airflow troubleshooting
+      steps, end the conversation.
+    expected_actions:
+      - FSA_Identify_User_Type_Based_on_Email
+      - FSA_Technician_Get_Troubleshooting_Steps
+    domain: field_service
+
+  - id: smoke_schedule_reschedule_full_flow_01
+    instruction: |
+      You are Robert Janzen, email rjanzen@example.com.
+      You want to reschedule appointment SA-0412 to 3 PM tomorrow.
+      Provide your email and appointment number upfront.
+      When the agent confirms the appointment has been rescheduled,
+      end the conversation.
+    expected_actions:
+      - FSA_Identify_User_Type_Based_on_Email
+      - FSA_Unschedule_Appointment
+      - FSA_Get_Available_Slots_Based_on_Appointment_Number
+      - FSA_Update_Arrival_Windows
+      - FSA_Schedule_Appointment
+    domain: field_service
+    expected_state:
+      service_appointments:
+        SA-0412:
+          status: "Scheduled"
+      scheduling_actions:
+        _min_length: 3

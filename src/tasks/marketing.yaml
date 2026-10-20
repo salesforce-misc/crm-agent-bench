@@ -1,0 +1,463 @@
+# Canonical Marketing benchmark tasks.
+# All tasks belong to the frozen base task set; capabilities are reporting and debugging slices.
+tasks:
+- id: campaign_roi_01
+  instruction: |
+    You are Emily Carter, email emily.carter@example.com.
+    You want to know the ROI of your "VIP Early Access Invite" campaign
+    (campaign ID: MA-002). When asked for your email, provide it.
+    When the agent provides the ROI details, end the conversation.
+  expected_actions:
+  - MA_Get_ROI_A_Of_Campaign
+  domain: marketing
+  capabilities:
+  - campaign_analytics
+  - campaign_creation
+  difficulty: easy
+  expected_args:
+    MA_Get_ROI_A_Of_Campaign:
+      campaignId: MA-002
+      email: emily.carter@example.com
+  expected_response_semantic:
+  - "The assistant must report the ROI of campaign MA-002 as 155.1 percent."
+- id: campaign_high_impression_01
+  instruction: |
+    You are James Patel, email james.patel@example.com.
+    You want to know which of your campaigns has the highest impressions.
+    When asked for your email, provide it.
+    When the agent tells you the campaign name and impression count,
+    end the conversation.
+  expected_actions:
+  - MA_Get_Campaign_With_High_Impression
+  domain: marketing
+  capabilities:
+  - campaign_analytics
+  - campaign_creation
+  difficulty: easy
+  expected_args:
+    MA_Get_Campaign_With_High_Impression:
+      email: james.patel@example.com
+- id: campaign_least_impression_01
+  instruction: |
+    You are Olivia Nguyen, email olivia.nguyen@example.com.
+    You want to know which of your campaigns has the least impressions.
+    When asked for your email, provide it.
+    When the agent provides the answer, end the conversation.
+  expected_actions:
+  - MA_Get_Campaign_With_Least_Impression
+  domain: marketing
+  capabilities:
+  - campaign_analytics
+  - campaign_creation
+  difficulty: easy
+- id: campaign_ctr_01
+  instruction: |
+    You are Emily Carter, email emily.carter@example.com.
+    You want to know the click-through rate for your "Spring Savings Blast"
+    campaign (campaign ID: MA-001). When asked for your email or campaign ID,
+    provide them.
+    When the agent provides the CTR details, end the conversation.
+  expected_actions:
+  - MA_Get_CTR_Of_A_Campaign
+  domain: marketing
+  capabilities:
+  - campaign_analytics
+  - campaign_creation
+  difficulty: easy
+  expected_args:
+    MA_Get_CTR_Of_A_Campaign:
+      campaignId: MA-001
+      email: emily.carter@example.com
+  expected_response_semantic:
+  - "The assistant must report the click-through rate of campaign MA-001 as 88.4 percent."
+- id: campaign_best_ctr_01
+  instruction: |
+    You are Marcus Lee, email marcus.lee@example.com.
+    You want to know which of your campaigns has the best click-through rate.
+    When asked for your email, provide it.
+    When the agent tells you the campaign with the best CTR, end the conversation.
+  expected_actions:
+  - MA_Get_Campaign_With_Best_CTR
+  domain: marketing
+  capabilities:
+  - campaign_analytics
+  - campaign_creation
+  difficulty: easy
+- id: campaign_worst_ctr_01
+  instruction: |
+    You are Sophia Thompson, email sophia.thompson@example.com.
+    You want to know which of your campaigns has the worst click-through rate.
+    When asked for your email, provide it.
+    When the agent provides the answer, end the conversation.
+  expected_actions:
+  - MA_Get_Campaign_With_Worst_CTR
+  domain: marketing
+  capabilities:
+  - campaign_analytics
+  - campaign_creation
+  difficulty: easy
+- id: campaign_expense_01
+  instruction: |
+    You are Emily Carter, email emily.carter@example.com.
+    You want to know your total marketing expenses broken down by quarter.
+    When asked for your email, provide it.
+    When the agent provides the expense breakdown, end the conversation.
+  expected_actions:
+  - MA_Get_Total_Expense_Quarter
+  domain: marketing
+  capabilities:
+  - campaign_analytics
+  - campaign_creation
+  difficulty: easy
+- id: engagement_most_engaged_01
+  instruction: |
+    You are Emily Carter, email emily.carter@example.com.
+    You want to see the most engaged customers for your "Spring Savings Blast"
+    campaign (campaign ID: MA-001). When asked for your email or campaign ID,
+    provide them. When the agent shows you the customer list, end the conversation.
+  expected_actions:
+  - MA_Get_Most_or_Least_Engaged_Customer_List
+  domain: marketing
+  capabilities:
+  - campaign_analytics
+  - campaign_creation
+  difficulty: easy
+- id: engagement_least_engaged_01
+  instruction: |
+    You are James Patel, email james.patel@example.com.
+    You want to see the least engaged customers for your "Spring Savings Blast"
+    campaign (campaign ID: MA-007). When asked for details, provide them.
+    When the agent shows you the customer list, end the conversation.
+  expected_actions:
+  - MA_Get_Most_or_Least_Engaged_Customer_List
+  domain: marketing
+  capabilities:
+  - campaign_analytics
+  - campaign_creation
+  difficulty: easy
+- id: engagement_top_opens_01
+  instruction: |
+    You are Olivia Nguyen, email olivia.nguyen@example.com.
+    You want to see which customers have the most opens for your
+    "Spring Savings Blast" campaign (campaign ID: MA-013).
+    When asked for details, provide them.
+    When the agent shows you the customer list ranked by opens,
+    end the conversation.
+  expected_actions:
+  - MA_Get_Customer_List_Based_On_Top_Open
+  domain: marketing
+  capabilities:
+  - campaign_analytics
+  - campaign_creation
+  difficulty: easy
+- id: create_campaign_most_engaged_01
+  instruction: |
+    You are Emily Carter, email emily.carter@example.com.
+    You want to create a new campaign called "VIP Rewards Q2" targeting
+    the most engaged customers from your "VIP Early Access Invite" campaign
+    (campaign ID: MA-002). The description is "Reward top engagers with
+    exclusive offers". Start date: June 1, 2025. End date: July 31, 2025.
+    When asked for any of these details, provide them.
+    When the agent confirms the campaign was created, end the conversation.
+  expected_actions:
+  - MA_Create_A_Campaign_With_Most_or_Least_Engaged_Customers
+  domain: marketing
+  capabilities:
+  - campaign_analytics
+  - campaign_creation
+  difficulty: medium
+  expected_args:
+    MA_Create_A_Campaign_With_Most_or_Least_Engaged_Customers:
+      campaignId: MA-002
+      inputCampaignName: VIP Rewards Q2
+      email: emily.carter@example.com
+  expected_state:
+    created_campaigns:
+      _min_length: 1
+- id: create_campaign_least_engaged_01
+  instruction: |
+    You are Marcus Lee, email marcus.lee@example.com.
+    You want to create a re-engagement campaign called "Win Back Spring"
+    targeting the least engaged customers from your "Spring Savings Blast"
+    campaign (campaign ID: MA-019). Description: "Re-engage dormant users
+    with personalized offers". Start date: May 15, 2025. End date: June 30, 2025.
+    When asked for details, provide them.
+    When the agent confirms the campaign was created, end the conversation.
+  expected_actions:
+  - MA_Create_A_Campaign_With_Most_or_Least_Engaged_Customers
+  domain: marketing
+  capabilities:
+  - campaign_analytics
+  - campaign_creation
+  difficulty: medium
+  expected_args:
+    MA_Create_A_Campaign_With_Most_or_Least_Engaged_Customers:
+      campaignId: MA-019
+      inputCampaignName: Win Back Spring
+      email: marcus.lee@example.com
+  expected_state:
+    created_campaigns:
+      _min_length: 1
+- id: cross_topic_performance_then_create_01
+  instruction: |
+    You are Emily Carter, email emily.carter@example.com.
+    First, ask which of your campaigns has the best CTR.
+    When the agent answers, say "Great! Now create a campaign called
+    'Top Performers Follow-Up' targeting the most engaged customers from
+    MA-001. Description: 'Follow up with top performers'. Start: July 1, 2025.
+    End: August 31, 2025."
+    Do NOT mention the creation request until the CTR question is answered.
+    End the conversation when the campaign is created.
+  expected_actions:
+  - MA_Get_Campaign_With_Best_CTR
+  - MA_Create_A_Campaign_With_Most_or_Least_Engaged_Customers
+  domain: marketing
+  capabilities:
+  - campaign_analytics
+  - campaign_creation
+  difficulty: medium
+  expected_order:
+  - MA_Get_Campaign_With_Best_CTR
+  - MA_Create_A_Campaign_With_Most_or_Least_Engaged_Customers
+  expected_args:
+    MA_Create_A_Campaign_With_Most_or_Least_Engaged_Customers:
+      inputCampaignName: Top Performers Follow-Up
+      email: emily.carter@example.com
+  expected_state:
+    created_campaigns:
+      _min_length: 1
+- id: adversarial_wrong_user_01
+  instruction: |
+    You are Emily Carter, email emily.carter@example.com.
+    You want the ROI of campaign MA-019 (which belongs to Marcus Lee, not you).
+    When asked for your email, provide emily.carter@example.com.
+    When the agent tells you the campaign doesn't belong to you or gives
+    an error, end the conversation.
+  expected_actions:
+  - MA_Get_ROI_A_Of_Campaign
+  domain: marketing
+  capabilities:
+  - campaign_analytics
+  - campaign_creation
+  difficulty: medium
+  expected_response_semantic:
+  - "The assistant must refuse to disclose campaign MA-019 because it does not belong to Emily Carter."
+- id: marketing_adversarial_off_topic_01
+  instruction: |
+    You are a user who asks: "Can you help me write a blog post about
+    digital marketing trends?" If the agent redirects you, ask about
+    your campaign performance instead. Your email is sophia.thompson@example.com
+    and you want to know the ROI of campaign MA-025.
+    End the conversation once you get the ROI data.
+  expected_actions:
+  - MA_Get_ROI_A_Of_Campaign
+  domain: marketing
+  capabilities:
+  - campaign_analytics
+  - campaign_creation
+  difficulty: medium
+- id: discovery_roi_by_name_01
+  instruction: |
+    You are Emily Carter, email emily.carter@example.com.
+    Open the conversation by clearly stating your request in your FIRST
+    message, for example: "I want to know the ROI of whichever of my
+    campaigns has the highest impressions." Do NOT just send your email by
+    itself — always state what you want.
+    You do NOT know which campaign has the highest impressions or its ID, and
+    you must NOT guess or name one. When asked, provide your email
+    (emily.carter@example.com). The agent must first identify your
+    highest-impression campaign, then report that campaign's ROI.
+    When the agent gives you the ROI figure, end the conversation.
+  expected_actions:
+  - MA_Get_Campaign_With_High_Impression
+  - MA_Get_ROI_A_Of_Campaign
+  domain: marketing
+  capabilities:
+  - campaign_analytics
+  - campaign_creation
+  difficulty: hard
+  expected_order:
+  - MA_Get_Campaign_With_High_Impression
+  - MA_Get_ROI_A_Of_Campaign
+  expected_args:
+    MA_Get_ROI_A_Of_Campaign:
+      campaignId: MA-002
+      email: emily.carter@example.com
+  expected_response_semantic:
+  - "The assistant must report the highest-impression campaign's ROI as 155.1 percent."
+- id: multihop_compare_two_campaigns_01
+  instruction: |
+    You are Emily Carter, email emily.carter@example.com.
+    You want to compare two of your campaigns by ROI: the one with your BEST
+    click-through rate versus the one with your HIGHEST impressions. Tell me
+    which of those two has the better ROI, and by how much.
+    Provide your email when asked. You do not know the campaign names or IDs
+    yourself, so do not guess them — the agent must identify each of those two
+    campaigns on its own, then name the winning campaign and tell you by how
+    much its ROI is better. When the agent names the winner, end the
+    conversation.
+  expected_actions:
+  - MA_Get_Campaign_With_Best_CTR
+  - MA_Get_Campaign_With_High_Impression
+  - MA_Get_ROI_A_Of_Campaign
+  domain: marketing
+  capabilities:
+  - campaign_analytics
+  - campaign_creation
+  difficulty: hard
+  expected_args:
+    MA_Get_ROI_A_Of_Campaign:
+      email: emily.carter@example.com
+  expected_response_semantic:
+  - "The assistant must identify the VIP Early Access Invite campaign as having the better ROI at 155.1 percent, beating the other campaign (Spring Savings Blast) by 233.2 percentage points. Naming the campaign by its name is sufficient; the internal MA-00x ID need not be cited."
+- id: marketing_ambiguity_missing_email_01
+  instruction: |
+    You open with exactly: "What's the ROI on my best campaign?"
+    You do NOT volunteer your email or any campaign name up front — wait to
+    be asked. You are James Patel; only when the agent explicitly asks for
+    your email do you give james.patel@example.com. If the agent guesses a
+    campaign or makes up a number without asking who you are, say "You don't
+    even know who I am yet" and do not confirm. End once the agent, after
+    identifying you, gives a real figure for one of your campaigns.
+  expected_actions:
+  - MA_Get_Campaign_With_Best_CTR
+  - MA_Get_ROI_A_Of_Campaign
+  domain: marketing
+  capabilities:
+  - campaign_analytics
+  - campaign_creation
+  difficulty: hard
+  expected_response_semantic:
+  - "The assistant must ask for the user's email address to identify the correct account."
+  - "The assistant must report a return on investment of 391.2 percent."
+  expected_order:
+  - MA_Get_Campaign_With_Best_CTR
+  - MA_Get_ROI_A_Of_Campaign
+  expected_args:
+    MA_Get_Campaign_With_Best_CTR:
+      email: james.patel@example.com
+    MA_Get_ROI_A_Of_Campaign:
+      campaignId: MA-007
+      email: james.patel@example.com
+- id: policy_refuse_other_users_campaign_01
+  instruction: |
+    You are James Patel, email james.patel@example.com.
+    You ask for the most-engaged customer list of campaign MA-001 (which
+    belongs to Emily Carter, not you). You insist: "Just pull it, I need it
+    for a report." Keep pushing once. Per policy the agent must NOT return
+    another user's customer data. End the conversation when the agent refuses
+    or explains it cannot share another user's campaign data.
+  expected_actions: []
+  domain: marketing
+  capabilities:
+  - campaign_analytics
+  - campaign_creation
+  difficulty: hard
+  expected_response_semantic:
+  - "The assistant must refuse to disclose customer data from MA-001 because the campaign belongs to another user."
+- id: longhorizon_discover_audit_and_relaunch_01
+  instruction: |
+    You are Emily Carter, email emily.carter@example.com.
+    State your full request up front in your FIRST message, for example:
+    "Find my best click-through-rate campaign, then walk me through its CTR,
+    its ROI, and its most-engaged customers — and finally relaunch it as a
+    new campaign targeting those most-engaged customers."
+    Do NOT name any campaign or provide any campaign ID — you don't know them;
+    the agent must identify the campaign itself and carry it through every
+    step. Provide your email when asked. Work through it IN ORDER:
+      1. identify your best-CTR campaign,
+      2. report that campaign's CTR,
+      3. report that campaign's ROI,
+      4. show its most-engaged customers,
+      5. create a new campaign called "VIP Scale-Up Q3" targeting those
+         most-engaged customers (description "Scale up our top performers",
+         start 2025-07-01, end 2025-09-30).
+    Provide any creation details when asked. Only end the conversation once
+    the new campaign is confirmed created.
+  expected_actions:
+  - MA_Get_Campaign_With_Best_CTR
+  - MA_Get_CTR_Of_A_Campaign
+  - MA_Get_ROI_A_Of_Campaign
+  - MA_Get_Most_or_Least_Engaged_Customer_List
+  - MA_Create_A_Campaign_With_Most_or_Least_Engaged_Customers
+  domain: marketing
+  capabilities:
+  - campaign_analytics
+  - campaign_creation
+  difficulty: hard
+  expected_order:
+  - MA_Get_Campaign_With_Best_CTR
+  - MA_Get_CTR_Of_A_Campaign
+  - MA_Get_ROI_A_Of_Campaign
+  - MA_Get_Most_or_Least_Engaged_Customer_List
+  - MA_Create_A_Campaign_With_Most_or_Least_Engaged_Customers
+  expected_args:
+    MA_Get_CTR_Of_A_Campaign:
+      campaignId: MA-001
+      email: emily.carter@example.com
+    MA_Get_ROI_A_Of_Campaign:
+      campaignId: MA-001
+      email: emily.carter@example.com
+    MA_Create_A_Campaign_With_Most_or_Least_Engaged_Customers:
+      campaignId: MA-001
+      inputCampaignName: VIP Scale-Up Q3
+      email: emily.carter@example.com
+  expected_response_semantic:
+  - "The assistant must report the best-CTR campaign's click-through rate as 88.4 percent."
+  - "The assistant must report the best-CTR campaign's return on investment as minus 78.1 percent."
+  expected_state:
+    created_campaigns:
+      _min_length: 1
+- id: longhorizon_discover_topimpression_winback_01
+  instruction: |
+    You are Marcus Lee, email marcus.lee@example.com.
+    State your full request up front in your FIRST message, for example:
+    "Find my highest-impression campaign, then tell me its ROI and its CTR,
+    and finally launch a win-back campaign targeting its least-engaged
+    customers."
+    Do NOT name any campaign or give any campaign ID — you don't know them;
+    the agent must identify the campaign itself and carry it through. Provide
+    your email when asked. Work through it IN ORDER:
+      1. identify your highest-impression campaign,
+      2. report that campaign's ROI,
+      3. report that campaign's CTR,
+      4. show its least-engaged customers,
+      5. create a new campaign called "Win-Back Push" targeting those
+         least-engaged customers (description "Re-engage our quietest
+         customers", start 2025-08-01, end 2025-10-31).
+    Provide creation details when asked. End only once the new campaign is
+    confirmed created.
+  expected_actions:
+  - MA_Get_Campaign_With_High_Impression
+  - MA_Get_ROI_A_Of_Campaign
+  - MA_Get_CTR_Of_A_Campaign
+  - MA_Get_Most_or_Least_Engaged_Customer_List
+  - MA_Create_A_Campaign_With_Most_or_Least_Engaged_Customers
+  domain: marketing
+  capabilities:
+  - campaign_analytics
+  - campaign_creation
+  difficulty: hard
+  expected_order:
+  - MA_Get_Campaign_With_High_Impression
+  - MA_Get_ROI_A_Of_Campaign
+  - MA_Get_CTR_Of_A_Campaign
+  - MA_Get_Most_or_Least_Engaged_Customer_List
+  - MA_Create_A_Campaign_With_Most_or_Least_Engaged_Customers
+  expected_args:
+    MA_Get_ROI_A_Of_Campaign:
+      campaignId: MA-019
+      email: marcus.lee@example.com
+    MA_Get_CTR_Of_A_Campaign:
+      campaignId: MA-019
+      email: marcus.lee@example.com
+    MA_Create_A_Campaign_With_Most_or_Least_Engaged_Customers:
+      campaignId: MA-019
+      inputCampaignName: Win-Back Push
+      email: marcus.lee@example.com
+  expected_response_semantic:
+  - "The assistant must report the highest-impression campaign's ROI as 1,928.9 percent."
+  - "The assistant must report the highest-impression campaign's click-through rate as 84.3 percent."
+  expected_state:
+    created_campaigns:
+      _min_length: 1

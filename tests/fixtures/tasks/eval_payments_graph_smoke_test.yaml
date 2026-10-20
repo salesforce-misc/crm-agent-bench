@@ -1,0 +1,70 @@
+# Payments Agent Smoke Test — 3 quick tasks for validation.
+#
+# Usage:
+#   python -m harness.bench_runner \
+#     --tasks tests/fixtures/tasks/eval_payments_graph_smoke_test.yaml \
+#     --config src/agents/payments.yaml
+
+tasks:
+- id: smoke_payments_checkout_01
+  instruction: 'You are the owner of account ACC-1001. You just want to know your
+
+    current account balance and whether the account is in good standing.
+
+    You are NOT trying to pay for anything right now.
+
+    When the agent tells you your balance and status, say "thanks, that''s
+
+    all" and end the conversation.
+
+    '
+  expected_actions:
+  - get_account_balance
+  domain: payments
+  expected_args:
+    get_account_balance:
+      account_id: ACC-1001
+  expected_response_semantic:
+  - "The assistant must report the account balance as 2,450.75 dollars."
+  forbidden_actions:
+  - process_payment
+- id: smoke_payments_checkout_02
+  instruction: 'You are the owner of account ACC-1002. You just want to check your
+
+    current balance before deciding whether you can afford anything. You
+
+    are NOT ready to make a payment yet.
+
+    When the agent tells you your balance, say "got it, thanks" and end
+
+    the conversation.
+
+    '
+  expected_actions:
+  - get_account_balance
+  domain: payments
+  expected_args:
+    get_account_balance:
+      account_id: ACC-1002
+  expected_response_semantic:
+  - "The assistant must report the account balance as 180 dollars."
+  forbidden_actions:
+  - process_payment
+- id: smoke_payments_checkout_03
+  instruction: 'You are the owner of account ACC-1003. You want to know your current
+
+    balance and account status. You are NOT trying to make a payment.
+
+    When the agent tells you your balance and status, end the conversation.
+
+    '
+  expected_actions:
+  - get_account_balance
+  domain: payments
+  expected_args:
+    get_account_balance:
+      account_id: ACC-1003
+  expected_response_semantic:
+  - "The assistant must report that the account is frozen."
+  forbidden_actions:
+  - process_payment

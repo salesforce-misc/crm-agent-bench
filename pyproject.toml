@@ -1,0 +1,119 @@
+[project]
+name = "crm-agent-bench"
+version = "0.1.0"
+description = "CRMAgentBench — multi-node ReAct agent benchmark on Apache Burr (no vendor runtime dependencies)"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "Apache-2.0"
+license-files = ["LICENSE.txt", "NOTICE.txt"]
+authors = [{ name = "Salesforce" }]
+keywords = ["llm", "agent", "benchmark", "react", "evaluation", "crm"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Software Development :: Testing",
+]
+
+# Operational pins: floor at the version we run, ceiling at the next major to
+# admit patches/minors but block breaking bumps.
+dependencies = [
+    "openai>=2.30,<3",
+    "litellm>=1.83,<2",
+    "httpx>=0.28,<1",
+    "pyyaml>=6.0,<7",
+    "pydantic>=2.12,<3",
+    # Apache Burr: the open-source state-machine runtime the per-node ReAct loop
+    # is built on. Replaces the proprietary agent runtime this project used to
+    # depend on. The [pydantic] extra enables typed state.
+    "apache-burr[pydantic]>=0.40,<1",
+]
+
+[project.urls]
+Homepage = "https://github.com/salesforce/crm-agent-bench"
+Repository = "https://github.com/salesforce/crm-agent-bench"
+Issues = "https://github.com/salesforce/crm-agent-bench/issues"
+
+[project.scripts]
+crm-agent-bench = "harness.bench_runner:main"
+crm-agent-bench-chat = "harness.cli:main"
+crm-agent-bench-report = "analysis.bench_report:main"
+crm-agent-bench-validate = "harness.benchmark_spec:main"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=9.0,<10",
+    "pytest-asyncio>=1.3,<2",
+    "pytest-cov>=7.0,<8",
+]
+lint = [
+    "ruff>=0.14,<1",
+    "ty>=0.0.1a1",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+# Only the importable Python packages ship in the wheel. The benchmark task
+# catalogs (src/tasks/*.yaml) and reference graph configs (src/agents/*.yaml) are
+# data files run from a source checkout — you pass them explicitly via
+# `--tasks` / `--config` — so they are intentionally NOT bundled. Run the
+# benchmark from a clone of this repo, not from the installed wheel alone.
+packages = ["src/harness", "src/analysis"]
+
+[tool.ruff]
+target-version = "py311"
+
+[tool.ruff.lint]
+# Project-wide exception, deliberately chosen:
+#   BLE001 — the benchmark harness intentionally catches broad ``Exception`` at
+#   task/tool boundaries so a single failing task or tool records an error and
+#   is isolated, rather than aborting the whole multi-task run. Narrowing these
+#   would defeat the point of a resilient batch runner.
+ignore = ["BLE001"]
+
+[tool.ruff.lint.per-file-ignores]
+# Tests unpack ``(passed, failures)`` / ``(passed, fails)`` result tuples and
+# assert only on the first element; the discarded name aids readability at the
+# call site. ``dict()`` literals in fixtures are likewise intentional.
+"tests/**" = ["RUF059", "C408"]
+
+[tool.ty.environment]
+# The importable packages live under src/ (src layout). Tell ty to resolve
+# `harness.*` / `analysis.*` from there so it doesn't report the editable
+# install's modules as unresolved imports.
+extra-paths = ["src"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+
+[tool.coverage.run]
+# Measure the importable packages only; the branch/line map is keyed on the
+# installed module paths.
+source = ["harness", "analysis"]
+omit = [
+    # Trivial `python -m` shims — a single `main()` dispatch with no logic.
+    "*/__main__.py",
+]
+
+[tool.coverage.report]
+# Regression ratchet, not an aspiration: the suite currently sits around 50%,
+# so 45% leaves headroom for churn while still failing CI if coverage falls off
+# a cliff (e.g. a whole module's tests are deleted). Raise this as coverage
+# improves — never lower it to make a red build pass.
+fail_under = 45
+show_missing = true
+exclude_also = [
+    "if __name__ == .__main__.:",
+    "raise NotImplementedError",
+    "@(abc\\.)?abstractmethod",
+    "if TYPE_CHECKING:",
+    "\\.\\.\\.",  # ellipsis-only Protocol/stub bodies
+]

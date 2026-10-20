@@ -1,0 +1,64 @@
+# Travel Agent Smoke Test — 3 quick tasks for validation.
+#
+# Usage:
+#   python -m harness.bench_runner \
+#     --tasks tests/fixtures/tasks/eval_travel_graph_smoke_test.yaml \
+#     --config src/agents/travel.yaml
+
+tasks:
+- id: smoke_travel_hotel_booking_01
+  instruction: 'You are a traveler planning a trip. You want to see what hotels are
+
+    available in New York. Ask the agent to search for hotels there.
+
+    As soon as the agent names at least one hotel option in New York,
+
+    say "thanks, that''s all I needed" and end the conversation.
+
+    '
+  expected_actions:
+  - search_hotels
+  domain: travel
+  expected_args:
+    search_hotels:
+      city: New York
+  expected_response_semantic:
+  - "The assistant must name at least one valid New York hotel option, such as Grand Central Hotel or Riverside Inn."
+- id: smoke_travel_hotel_booking_02
+  instruction: 'You are a traveler planning a trip. You want to see what hotels are
+
+    available in San Francisco. Ask the agent to search for hotels there.
+
+    As soon as the agent names the hotel option in San Francisco, say
+
+    "great, thanks" and end the conversation.
+
+    '
+  expected_actions:
+  - search_hotels
+  domain: travel
+  expected_args:
+    search_hotels:
+      city: San Francisco
+  expected_response_semantic:
+  - "The assistant must identify Golden Gate Suites as the San Francisco hotel option."
+- id: smoke_travel_hotel_booking_03
+  instruction: 'You are a traveler. You want to see what hotels are available in
+
+    Chicago. Ask the agent to search for hotels there.
+
+    As soon as the agent tells you there are no hotels available in
+
+    Chicago (or none found), say "OK, thanks anyway" and end the
+
+    conversation. Do not ask the agent to search a different city.
+
+    '
+  expected_actions:
+  - search_hotels
+  domain: travel
+  expected_args:
+    search_hotels:
+      city: Chicago
+  expected_response_semantic:
+  - "The assistant must state that no hotels were found for the requested location."

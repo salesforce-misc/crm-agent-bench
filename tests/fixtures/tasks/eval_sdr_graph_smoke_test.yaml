@@ -1,0 +1,46 @@
+# SDR Agent Smoke Test — 3 quick tasks for validation.
+#
+# Usage:
+#   python -m harness.bench_runner \
+#     --tasks tests/fixtures/tasks/eval_sdr_graph_smoke_test.yaml \
+#     --config src/agents/sales.yaml
+
+tasks:
+  - id: smoke_lead_outreach_01
+    instruction: |
+      You are a sales manager. You want to draft an initial outreach email
+      for lead Alice Thompson (lead ID: lead-001). Ask the agent to draft
+      the email. When the agent shows you the draft, end the conversation.
+    expected_actions:
+      - Sales_SDR_Draft_Initial_Outreach_Email_With_Products
+    domain: sales
+    expected_state:
+      emails_drafted:
+        _min_length: 1
+
+  - id: smoke_warranty_update_01
+    instruction: |
+      You are a sales manager. Katherine Prince (katherine.prince@example.com)
+      has a warranty that will expire next month. Ask the agent to update her
+      warranty status to "About to Expire". When the agent confirms, end
+      the conversation.
+    expected_actions:
+      - SDR_Update_Warranty_Status_to_About_to_Expire
+    domain: sales
+    expected_state:
+      person_accounts:
+        katherine.prince@example.com:
+          warranty_status: "About to Expire"
+
+  - id: smoke_opt_out_01
+    instruction: |
+      You are a sales manager. Lead James Rodriguez (lead-004) requested to
+      be removed from outreach. Ask the agent to opt him out. When the agent
+      confirms, end the conversation.
+    expected_actions:
+      - Sales_SDR_Opt_Out_Target_Rating_as_Cold
+    domain: sales
+    expected_state:
+      leads:
+        lead-004:
+          rating: "Cold"

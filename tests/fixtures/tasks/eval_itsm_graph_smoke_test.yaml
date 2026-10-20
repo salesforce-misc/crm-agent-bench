@@ -1,0 +1,64 @@
+# IT Service Management (ITSM) Agent Smoke Test — 3 quick tasks for validation.
+#
+# Usage:
+#   python -m harness.bench_runner \
+#     --tasks tests/fixtures/tasks/eval_itsm_graph_smoke_test.yaml \
+#     --config src/agents/itsm.yaml
+
+tasks:
+- id: smoke_itsm_ticket_ops_01
+  instruction: 'You are an IT service desk employee. You want to know the current
+
+    status and priority of ticket TCK-1001. Ask the agent to look it up.
+
+    As soon as the agent tells you the status and priority, say "thanks,
+
+    that''s all" and end the conversation.
+
+    '
+  expected_actions:
+  - get_ticket
+  domain: itsm
+  expected_args:
+    get_ticket:
+      ticket_id: TCK-1001
+  expected_response_semantic:
+  - "The assistant must identify the requested ticket as TCK-1001."
+  - "The assistant must report that ticket TCK-1001 is open with high priority."
+- id: smoke_itsm_ticket_ops_02
+  instruction: 'You are the on-call dispatcher starting your shift. You want to see
+
+    every ticket that is currently Open so you know what needs attention.
+
+    Ask the agent to list them. Once the agent lists the open tickets,
+
+    end the conversation.
+
+    '
+  expected_actions:
+  - list_tickets
+  domain: itsm
+  expected_args:
+    list_tickets:
+      status: Open
+  expected_response_semantic:
+  - "The assistant must include TCK-1001 in the list of open tickets."
+  - "The assistant must include TCK-1004 in the list of open tickets."
+- id: smoke_itsm_ticket_ops_03
+  instruction: 'You are a team lead checking on the procurement ticket TCK-1004. You
+
+    specifically want to know who it is currently assigned to. Ask the
+
+    agent to check. When the agent tells you it has no owner yet, end
+
+    the conversation.
+
+    '
+  expected_actions:
+  - get_ticket
+  domain: itsm
+  expected_args:
+    get_ticket:
+      ticket_id: TCK-1004
+  expected_response_semantic:
+  - "The assistant must report that the ticket currently has no assignee."

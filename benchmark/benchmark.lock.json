@@ -1,0 +1,2619 @@
+{
+  "lock_schema_version": 1,
+  "benchmark_version": "2.6.0",
+  "dataset_version": "1.5.0",
+  "artifacts": {
+    "benchmark/benchmark.yaml": "6f1c65850128e27f3cc6b68935c1934d8881cb5baec5a18d4c39797ac3fa8570",
+    "pyproject.toml": "342f911ae2143ded027e3f29bd786c6f9da49c0ae85fceba38a30ffe145d20e0",
+    "src/agents/customer_support.yaml": "0a9aad24b07fc6688039cf5e6f5dcbdbc0c5997296fb40e17eadacd364460e53",
+    "src/agents/field_service.yaml": "d45cad9565878fe05837585666acc693be1c86cd2a920d33f795a229bf035973",
+    "src/agents/itsm.yaml": "3b6e5822063bdf45ff438696d11e329fba7d66866122175f3a00ec06e08cf106",
+    "src/agents/marketing.yaml": "7b23c0a9a33d27b9fbe76893656800fb5a68c86c3e96d271f9f26453a9956c93",
+    "src/agents/onboarding.yaml": "bf447ad893ea2a9263aaefdcc8210b1943bdea678ca89cdb7499ecba3d575c6b",
+    "src/agents/payments.yaml": "5cd1e64d29b71148fff9904a803d66dd12a7856a9dac0ceb6ffdfa53a2358d99",
+    "src/agents/retail.yaml": "e90e119435b0b41e17a5e08deb778c2734a0ab814b2af0b6781801d06430c0b7",
+    "src/agents/sales.yaml": "cf025832db21ecbb1086b9af8f3d4d299428d010e1664c405a5466f0d2091e1d",
+    "src/agents/travel.yaml": "ab031e8603e5a815a827f95ac2500748236b4db72eff933674bd66392f9f7c8c",
+    "src/analysis/bench_report.py": "fd7a40f6215b20d4b43cb29c5409f8d264db300917098f4e3fdca1bd83fd264a",
+    "src/harness/__init__.py": "5e5c7443ab9cc4a41272be46cbacc70e5dea6dd8749fd90fee5f9a6694f1bd77",
+    "src/harness/__main__.py": "32eaf86260b1a77651e94033add83856d9312efc5ddd84249df6e7cf3510b03d",
+    "src/harness/agent.py": "2eec94d67bc3048a3f2e766f9b448be97d631714e87eea4749f96962e8f3606c",
+    "src/harness/agent_burr.py": "d2f8bfdeca36ddddd5d4c378d43136c5a80816d2ecd548d87715632f77a9657f",
+    "src/harness/bench_runner.py": "d509b8874530784260a9a1ab8319f59f9e1e346b3913886398c821fe9ce63ba9",
+    "src/harness/benchmark_spec.py": "1c86091c93d39903272f761b7ae4c18c5029df6faa0323435356f8e0532fbfc2",
+    "src/harness/cli.py": "66669fd5ddf138a7edc2f1aee811eabcf80fb612c6cc3b3ccb9d268f03ec47da",
+    "src/harness/convert_afscript.py": "1efa6906a65a53d790cbf77b5c291bcdce01fc346d7dfef2a63af42acc32dd10",
+    "src/harness/exceptions.py": "e6e3cd30b31895b8c16da2555d110db3765a9d6db1f3782f6d524bb71d5327b5",
+    "src/harness/grading.py": "53d26ce6590106a48ac992e11fa39d3b88a2b9bfc0111c94de20f92dc910e5fe",
+    "src/harness/graph_agent.py": "0a9c77fdcbd7a00dfb65f92333bb6d4d6df4f1b85664979fbd25376b3bc93c18",
+    "src/harness/graph_agent_burr.py": "7137639063ce3f05515847a1c2e0cef62a64e7f39a2d3393454731ca644d47bb",
+    "src/harness/graph_cli.py": "9bcb3a7328bcbb9f4b6233c0b355fe900e580651d531c3ef9c64106168a4e3f9",
+    "src/harness/llm/__init__.py": "3131821c9c06e8e928e2fd1c4c90f9daaa480d1a7807e1d0e4165a61ae314b30",
+    "src/harness/llm/base.py": "287f630ee28d508e647641351a0a33a02a4cbd3ec614342ff0187089b20838b2",
+    "src/harness/llm/litellm_client.py": "f1ea698e3ae6a4edce7aa03415d82eb294b013018de8426c7ff19ac09869d471",
+    "src/harness/llm/openai_client.py": "6e3850d1ae668e1078f0949dc9753b0090d501f06eb1c26a8de326f2fb68efd7",
+    "src/harness/llm/pricing.py": "da13794fb6883cb21240152c55a7f787d437190b3c99f9f23440d4e5ba69b9c7",
+    "src/harness/llm/pricing.yaml": "8f630fcc5e3261bd2b3a9cd20a9ea12f44f91c68866e947f4a952251b9671a50",
+    "src/harness/llm/usage_tracker.py": "c38f8c4858c5daaa90e3dbc7f4df2018153bf1e90ac9464d32179deea5f19d4f",
+    "src/harness/models.py": "b5ea4c2f091410595762372b6523aa8c76e25830bb4afde748da7f8f9daa5a38",
+    "src/harness/prompts/__init__.py": "98ecd5f1dc611b504a3f90d3f1a0d4b6642693b83e1e6047e981d9cd25e7126c",
+    "src/harness/prompts/loader.py": "e0a1dd92d5bfff4e53af5d84001c9c005ac6e2d8be1120bae3b19c02612f6e90",
+    "src/harness/prompts/single_node_agent.yaml": "30032cff1abf82a844801ce706631b9b27f004602ecfc6f176114dcb181e96ac",
+    "src/harness/prompts/topic_classifier.yaml": "2e98d78042a82377da19c2997b2673afea2c74505c9d87c0544683f4fa252009",
+    "src/harness/semantic_grader.py": "e2b5c9c88c7c815df3e55d390b0276b32adbd1df22102012de181ab7ce321161",
+    "src/harness/tools/__init__.py": "d07aa80e0cd8fc80c42687e96e9540eaf1e3307750bd8b55374a45b97b8826a3",
+    "src/harness/tools/domains/__init__.py": "6eea578f9402b91b3ccfaf68035d9405a0ffd9997a494fe764d256963176f0d1",
+    "src/harness/tools/domains/canonical.py": "cb17612f8b1fe650e90fe61aee5fa0a5fb14b1bb2183481c59e463644dcd7399",
+    "src/harness/tools/domains/commerce.py": "731099d402ab41e5193001f8f63544c6197dad7f3a2174e1c7bcc954a4cf352b",
+    "src/harness/tools/domains/csm.py": "95d289a572a9f2ba9cca6d6593886058fc3d39201d16f42d98bd04d5cd43f257",
+    "src/harness/tools/domains/customer_service.py": "fb93f916a6e36ed5e0a6fff398838235f65c65a03f66f3fc45dfa7842f00cb0e",
+    "src/harness/tools/domains/field_service.py": "9f3c5d4289746e09120a7bd031d90dd6240905e72ac66652ae7c6d40a02200e5",
+    "src/harness/tools/domains/integration.py": "299704fe2e31fde4831e42294bcf8e92ba59abc4b99b4dd1cc4e1f95570ac7e0",
+    "src/harness/tools/domains/itsm.py": "25670be6eb70bb39b1ca3d0c988af8b9d07e3035a3e812b6e8607a76aa0038b3",
+    "src/harness/tools/domains/marketing.py": "0216d552b4b5e5db97845c69ab7de558cb061f134a40986e2d5fef5f0ea5114b",
+    "src/harness/tools/domains/onboarding.py": "413b96c19ab89a89e75bb767df4cfd94c8c663d243e9ae4a8523812013631b60",
+    "src/harness/tools/domains/payments.py": "bfe7b50d76bb9d50b94f3282112c9f5134e769223443aeec84fd08e4aa98836e",
+    "src/harness/tools/domains/sdr.py": "d02b32298970be468bd0c3ca6385984f1215ed78dcf59b591d17abf2da856ab2",
+    "src/harness/tools/domains/support.py": "d6fb9676c67d7f57d735c3a860017100aa6f2e5f63a723720a014b3bd88a5540",
+    "src/harness/tools/domains/travel.py": "9396e5a6b6d81e053df24c1fcf2ca6c3a92ebaa488c8c4dd55e2a616ba96e30b",
+    "src/harness/tools/environment.py": "6b485fcab8145b1ac439875f25d1f27d9fad47b34537a65b32243a14b5d8ac29",
+    "src/harness/tools/examples.py": "7f259922243afc2e087eced61cbc78fd07b4de0780253751ef0b9bbeb4d19c3a",
+    "src/harness/tools/registry.py": "d7bc56353113dd19ac342bc07253acefac59abf8bff2d58fecf1f3e0d6e4fa06",
+    "src/harness/tools/state_validation.py": "dce57b0fb3961c9606235a2dca7eaebff55068c8894d1f404d8d3de611ae4ce3",
+    "src/harness/tools/stubs.py": "74ecf93c96c27ba02b7b63204ed18ac9416fb5a6611b40eccbbd7f33b2b3ed28",
+    "src/harness/user_simulator.py": "079699a15f7852c3ef8299c518e5a9a5757ea39f320b45d6434832d923c75800",
+    "src/tasks/customer_support.yaml": "3e5a49f011d8ee79dd0d8180dbca4b9e40717557c5be31c053ea46d984332ab5",
+    "src/tasks/field_service.yaml": "3daebcdf3f9ea65e25f5e62217f504e9873fe0db60d925dfe915902ffb312ee9",
+    "src/tasks/itsm.yaml": "9c9b2ddb6cf96db71e13ffa2398d98a7e0dedfee4af266e9cbf9cd477f1b52bf",
+    "src/tasks/marketing.yaml": "b003a595ba0ac81847c1d130e9a8183dc8481e2c35535ef9fe6f486f92ce2942",
+    "src/tasks/onboarding.yaml": "ac7314ebf74ad491d7ac0994fb0b9c5b7de9f161d2bb712398302019732371a3",
+    "src/tasks/payments.yaml": "cebc27141d65ba940747c1f67b45551a0faf8c3b23e6d5da153b0c8f1b472537",
+    "src/tasks/policies/customer_support_policy.md": "35fb7915c8b68c8b5acf8bd1656735cc0efb68197d6647656730a7761d5db9ba",
+    "src/tasks/policies/field_service_policy.md": "0d9f2d8bd43b2e3cdfa4a8e2f13d8cb0e2f8ac157121a79a5600661c47862ca2",
+    "src/tasks/policies/itsm_policy.md": "7899fa4af107555734cae05700acd3a265ac7a61761322ed0a76186db8a6bbb5",
+    "src/tasks/policies/marketing_policy.md": "ca161eefaf5e50d502c91b8b5ce2dcb61a4a2c18f85150b13c0d48798c1af775",
+    "src/tasks/policies/onboarding_policy.md": "b36118961f5fa1666020d510d30ace41a40f369c67ec8369d30ddcae48bd831d",
+    "src/tasks/policies/payments_policy.md": "f9fc28b26c366aa83e7d63e5a37b0f23f95db9b12b05850b0428be814c5a5edf",
+    "src/tasks/policies/retail_policy.md": "21d21df82443911ffbf50bfa24e221eb04ed0e1c7aaa1b15c620f4ad7f4014a0",
+    "src/tasks/policies/sales_policy.md": "94e7f6bb284f284052556b322a159e38e8115fe2d2cc357bcecb2521abfaeaa3",
+    "src/tasks/policies/travel_policy.md": "66af99981c99371ccf617bf14350a25579337820bd488cc38411cb9fa0940a57",
+    "src/tasks/retail.yaml": "cb502a81f160352681c25f0eeac6440d047f178456f9ff198043d54a9b50e2d8",
+    "src/tasks/sales.yaml": "fc571a6c66191d74798aab7b3663ee07c8f4cd94add5510a33f05c25379d5aa3",
+    "src/tasks/travel.yaml": "7caeb2760c22b481c4df755151c5e0e049c94066049d0ba28f5f3014f01e327f",
+    "uv.lock": "72574e840eae21032af8b2e0c821baa0c37cbee6daa742fd9b7447a27b0691a2"
+  },
+  "domains": {
+    "retail": {
+      "initial_state_sha256": "f0acfd7e82b4b94e187bfc4152d740254def150ca21f25e0f404d083cf98181e",
+      "tool_contract_sha256": "cce69322249ee9361cdd0715966c92c4129c31e13b1cc45cd6154668633d50e9",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "CSA_Apply_Promotion",
+            "description": "Apply a promotion coupon code to the user's cart",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "user_email": {
+                  "type": "string"
+                },
+                "Coupon": {
+                  "type": "string",
+                  "default": ""
+                }
+              },
+              "required": [
+                "user_email"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "CSA_Get_Promotion_For_Cart",
+            "description": "Get the list of promotions applicable to products in the user's cart",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "user_email": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "user_email"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "CSA_Get_inventory_Product",
+            "description": "Get inventory details for a product including SKU and available locations",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "emailId": {
+                  "type": "string"
+                },
+                "productName": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "emailId",
+                "productName"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "CSA_Knowledge_FAQ",
+            "description": "Search the FAQ knowledge base for information on promotions, discounts, product compatibility, shipping charges, and shipping methods",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "CustomerQuery": {
+                  "type": "string"
+                },
+                "citationMode": {
+                  "type": "string",
+                  "default": ""
+                }
+              },
+              "required": [
+                "CustomerQuery"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "CSA_List_Compatible_Motherboards",
+            "description": "List motherboards that are compatible or incompatible with a product",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "productName": {
+                  "type": "string"
+                },
+                "compatibility": {
+                  "type": "string",
+                  "enum": [
+                    "compatible",
+                    "incompatible"
+                  ]
+                }
+              },
+              "required": [
+                "productName",
+                "compatibility"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "CSA_Product_Compatibility",
+            "description": "Check product compatibility based on the product name and relationship type",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "productName": {
+                  "type": "string"
+                },
+                "RelationshipType": {
+                  "type": "string",
+                  "enum": [
+                    "compatible",
+                    "incompatible"
+                  ]
+                },
+                "ReferenceProduct": {
+                  "type": "string",
+                  "default": ""
+                }
+              },
+              "required": [
+                "productName",
+                "RelationshipType"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "CSA_Product_Compatibility_Of_Cart",
+            "description": "Check cart for compatible and non-compatible products, providing recommendations and error messages as needed",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "user_email": {
+                  "type": "string",
+                  "default": ""
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "CSA_Promotion_related_Inquiry",
+            "description": "Get promotion details for a product in a specific location",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "Location": {
+                  "type": "string"
+                },
+                "ProductName": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "Location",
+                "ProductName"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "CSA_Reserve_inventory_Product",
+            "description": "Reserve inventory for a product (records a reservation for the customer)",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "emailId": {
+                  "type": "string"
+                },
+                "productName": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "emailId",
+                "productName"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "add_to_cart",
+            "description": "Add a product to a customer's cart",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "customer_id": {
+                  "type": "string"
+                },
+                "product_id": {
+                  "type": "string"
+                },
+                "quantity": {
+                  "type": "integer",
+                  "default": 1
+                }
+              },
+              "required": [
+                "customer_id",
+                "product_id"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "authenticate_customer",
+            "description": "Authenticate a customer using their PIN",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "customer_id": {
+                  "type": "string"
+                },
+                "pin": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "customer_id",
+                "pin"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "check_return_eligibility",
+            "description": "Check whether an authenticated customer's order is eligible for return",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "order_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "order_id"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "get_cart",
+            "description": "Get a customer's cart contents and total",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "customer_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "customer_id"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "get_order_status",
+            "description": "Get the status of an order by ID",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "order_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "order_id"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "get_product",
+            "description": "Look up a product by ID",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "product_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "product_id"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "get_recommendations",
+            "description": "Get related product recommendations for a product",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "product_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "product_id"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "list_products",
+            "description": "List all products in the catalog",
+            "parameters": {
+              "type": "object",
+              "properties": {}
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "process_return",
+            "description": "Process a return for a delivered order",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "order_id": {
+                  "type": "string"
+                },
+                "reason": {
+                  "type": "string",
+                  "default": ""
+                }
+              },
+              "required": [
+                "order_id"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "search_products",
+            "description": "Search products by name or category (case-insensitive)",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "query": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "query"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "track_shipment",
+            "description": "Track a shipment by tracking number",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "tracking_number": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "tracking_number"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "customer_support": {
+      "initial_state_sha256": "3b7aeea557e7d42c98ad1f2d951fdc8722ccb2872da2bf3a004a64a7e121642f",
+      "tool_contract_sha256": "abdd9f7f4c4fa0dea0be56d725ff91949f73ba336802ef7e6016a52f36d7024f",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "analyze_billing_issue",
+            "description": "Analyze and diagnose a billing issue for a customer",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "customer_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "customer_id"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "analyze_technical_issue",
+            "description": "Analyze and diagnose a technical issue for a customer",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "customer_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "customer_id"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "assess_churn_risk",
+            "description": "Assess churn risk for a customer based on support history and engagement",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "customer_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "customer_id"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "calculate_customer_value",
+            "description": "Calculate a customer's lifetime value and value tier from account data",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "customer_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "customer_id"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "check_account_balance",
+            "description": "Check current account balance",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "account_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "account_id"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "check_payment",
+            "description": "Check payment status for an account",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "account_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "account_id"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "check_service_status",
+            "description": "Check service status",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "service": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "service"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "classify_issue",
+            "description": "Heuristically classify a support issue description into a type and priority",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "description": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "description"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "consult_specialist",
+            "description": "Consult a specialist for a given topic and question (simulated expert answer)",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "topic": {
+                  "type": "string"
+                },
+                "question": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "topic",
+                "question"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "create_case",
+            "description": "Create a support case for a customer",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "customer_id": {
+                  "type": "string"
+                },
+                "subject": {
+                  "type": "string"
+                },
+                "priority": {
+                  "type": "string",
+                  "enum": [
+                    "high",
+                    "medium",
+                    "low"
+                  ],
+                  "default": "medium"
+                }
+              },
+              "required": [
+                "customer_id",
+                "subject"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "create_ticket",
+            "description": "Create a support ticket",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "subject": {
+                  "type": "string"
+                },
+                "priority": {
+                  "type": "string",
+                  "default": "medium"
+                }
+              },
+              "required": [
+                "subject"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "escalate_case",
+            "description": "Escalate an existing case to a specialist team",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "case_id": {
+                  "type": "string"
+                },
+                "team": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "case_id",
+                "team"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "escalate_to_human",
+            "description": "Escalate the current conversation to a human support agent",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "reason": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "reason"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "fetch_account_data",
+            "description": "Fetch account data including plan, MRR, tenure, and status",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "account_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "account_id"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "fetch_customer",
+            "description": "Fetch a customer record by customer ID",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "customer_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "customer_id"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "fetch_order_history",
+            "description": "Fetch a customer's past order history",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "customer_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "customer_id"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "fetch_support_history",
+            "description": "Fetch a customer's past support interaction history",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "customer_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "customer_id"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "fetch_user_profile",
+            "description": "Fetch a customer's profile (segment and engagement score)",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "customer_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "customer_id"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "generate_recommendations",
+            "description": "Generate retention recommendations for a customer based on their profile",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "customer_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "customer_id"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "get_account_info",
+            "description": "Look up account information",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "account_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "account_id"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "get_datetime",
+            "description": "Get current date and time",
+            "parameters": {
+              "type": "object",
+              "properties": {}
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "get_invoice",
+            "description": "Look up an invoice by ID",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "invoice_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "invoice_id"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "process_refund",
+            "description": "Process a refund for an invoice",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "invoice_id": {
+                  "type": "string"
+                },
+                "reason": {
+                  "type": "string",
+                  "default": ""
+                }
+              },
+              "required": [
+                "invoice_id"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "search_kb",
+            "description": "Search the knowledge base",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "query": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "query"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "search_knowledge_base",
+            "description": "Search the support knowledge base for matching articles",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "query": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "query"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "field_service": {
+      "initial_state_sha256": "421941a4611208e8f4420808296e76281a7ff112cd8927d2cedd37abe614a54f",
+      "tool_contract_sha256": "0f1401803202177cd1a467f668b672888e61550f272559414ad35265149ee318",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "FSA_Get_Appointment_details_based_on_User_Input",
+            "description": "Get appointment details for a user based on their email and optional date/time preference",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string"
+                },
+                "preferred_date": {
+                  "type": "string",
+                  "default": ""
+                },
+                "preferred_time": {
+                  "type": "string",
+                  "default": ""
+                }
+              },
+              "required": [
+                "email"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "FSA_Get_Available_Slots_Based_on_Appointment_Number",
+            "description": "Get available time slots for rescheduling an appointment",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "appointment_number": {
+                  "type": "string"
+                },
+                "preferred_date": {
+                  "type": "string",
+                  "default": ""
+                }
+              },
+              "required": [
+                "appointment_number"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "FSA_Get_Pre_Work_Brief_for_Technician",
+            "description": "Get the pre-work brief for a technician including work order details, service notes, and checklist",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "appointment_number": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "appointment_number"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "FSA_Identify_User_Type_Based_on_Email",
+            "description": "Identify user type (Customer or Technician) based on email address",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "email"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "FSA_Knowledge_FAQ",
+            "description": "Search the FAQ knowledge base for information about appointments, repair times, compatibility, and service policies",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "query": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "query"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "FSA_Schedule_Appointment",
+            "description": "Schedule or reschedule a service appointment to a specific time slot",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "appointment_number": {
+                  "type": "string"
+                },
+                "slot": {
+                  "type": "string",
+                  "default": ""
+                }
+              },
+              "required": [
+                "appointment_number"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "FSA_Technician_Get_Troubleshooting_Steps",
+            "description": "Get troubleshooting steps from the technician knowledge library based on the issue description",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "issue_description": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "issue_description"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "FSA_Unschedule_Appointment",
+            "description": "Unschedule an existing service appointment to allow rescheduling",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "appointment_number": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "appointment_number"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "FSA_Update_Arrival_Windows",
+            "description": "Update the arrival window for a service appointment",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "appointment_number": {
+                  "type": "string"
+                },
+                "start_time": {
+                  "type": "string"
+                },
+                "end_time": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "appointment_number",
+                "start_time",
+                "end_time"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "Field_Service_Agent_Identify_the_issue",
+            "description": "Identify the issue based on work order details and customer description",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string"
+                },
+                "asset_name": {
+                  "type": "string",
+                  "default": ""
+                },
+                "issue_description": {
+                  "type": "string",
+                  "default": ""
+                }
+              },
+              "required": [
+                "email"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "Get_New_Work_Order_by_User_Input",
+            "description": "Create a new work order for a customer's issue and return available appointment slots",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string"
+                },
+                "asset_name": {
+                  "type": "string",
+                  "default": ""
+                },
+                "issue_description": {
+                  "type": "string",
+                  "default": ""
+                },
+                "work_type": {
+                  "type": "string",
+                  "default": "Laptop Troubleshooting"
+                }
+              },
+              "required": [
+                "email"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "Get_Warranty_Details_Field_Service_Agent",
+            "description": "Get warranty and entitlement details for a customer's asset",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string"
+                },
+                "asset_name": {
+                  "type": "string",
+                  "default": ""
+                }
+              },
+              "required": [
+                "email"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "itsm": {
+      "initial_state_sha256": "497715ea67071f7754c2126a28c37fa5d2d37f0ae5a843cd8c0d242ced23cb71",
+      "tool_contract_sha256": "b8d527a8b1cef27f56a79359c98554479056fbfeda0d5370d707c32e33c390ae",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "add_ticket_comment",
+            "description": "Add a comment to a ticket",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "ticket_id": {
+                  "type": "string"
+                },
+                "comment": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "ticket_id",
+                "comment"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "assign_ticket",
+            "description": "Assign a ticket to a user",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "ticket_id": {
+                  "type": "string"
+                },
+                "assignee": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "ticket_id",
+                "assignee"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "check_dependencies",
+            "description": "Check a ticket's dependencies and the status of open dependencies",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "ticket_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "ticket_id"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "check_permission",
+            "description": "Check whether a user's role permits an action, optionally for a ticket",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "user_id": {
+                  "type": "string"
+                },
+                "action": {
+                  "type": "string"
+                },
+                "ticket_id": {
+                  "type": "string",
+                  "default": ""
+                }
+              },
+              "required": [
+                "user_id",
+                "action"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "close_ticket",
+            "description": "Close a ticket",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "ticket_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "ticket_id"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "delete_ticket",
+            "description": "Delete a ticket after a clean dependency check and ticket-specific delete permission",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "ticket_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "ticket_id"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "escalate_ticket",
+            "description": "Escalate a ticket to Critical priority",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "ticket_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "ticket_id"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "get_business_hours",
+            "description": "Get current business hours and whether the desk is open now",
+            "parameters": {
+              "type": "object",
+              "properties": {}
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "get_ticket",
+            "description": "Look up a ticket by ID",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "ticket_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "ticket_id"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "list_tickets",
+            "description": "List all tickets, optionally filtered by status",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "default": ""
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "reassign_ticket",
+            "description": "Reassign an already-assigned ticket to a different user",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "ticket_id": {
+                  "type": "string"
+                },
+                "assignee": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "ticket_id",
+                "assignee"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "update_ticket_status",
+            "description": "Update the status of a ticket",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "ticket_id": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "ticket_id",
+                "status"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "payments": {
+      "initial_state_sha256": "42fc62b594650212a27d946ef67c072fbee184a8ffb05ddc61a0fad94f07de07",
+      "tool_contract_sha256": "5f917460d00fd5c284a27ea6da51e3e403dfee3b6a1612a0a4b9f2d7f9ddcf8a",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "adjust_loyalty_for_offline_purchase",
+            "description": "Credit loyalty points for a verified offline purchase receipt",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "receipt_id": {
+                  "type": "string"
+                },
+                "account_id": {
+                  "type": "string"
+                },
+                "amount": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "receipt_id",
+                "account_id",
+                "amount"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "award_loyalty_points",
+            "description": "Award loyalty points to an account based on a spend amount",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "account_id": {
+                  "type": "string"
+                },
+                "amount": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "account_id",
+                "amount"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "evaluate_loan",
+            "description": "Evaluate a loan application and return an approval decision",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "applicant_id": {
+                  "type": "string"
+                },
+                "amount": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "applicant_id",
+                "amount"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "execute_transfer",
+            "description": "Execute a funds transfer between two accounts",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "from_account": {
+                  "type": "string"
+                },
+                "to_account": {
+                  "type": "string"
+                },
+                "amount": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "from_account",
+                "to_account",
+                "amount"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "get_account_balance",
+            "description": "Get an account's current balance and status",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "account_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "account_id"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "get_credit_score",
+            "description": "Get an applicant's credit score and income",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "applicant_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "applicant_id"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "log_transaction",
+            "description": "Append a transaction ID to the audit log",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "transaction_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "transaction_id"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "process_gateway_payment",
+            "description": "Process a payment through the external payment gateway",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "amount": {
+                  "type": "number"
+                },
+                "card_token": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "amount",
+                "card_token"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "process_payment",
+            "description": "Process a payment and create a transaction record",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "amount": {
+                  "type": "number"
+                },
+                "method": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "amount",
+                "method"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "send_receipt",
+            "description": "Send a receipt for a completed transaction",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "transaction_id": {
+                  "type": "string"
+                },
+                "amount": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "transaction_id",
+                "amount"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "validate_transfer",
+            "description": "Validate whether a funds transfer between two accounts would be allowed",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "from_account": {
+                  "type": "string"
+                },
+                "to_account": {
+                  "type": "string"
+                },
+                "amount": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "from_account",
+                "to_account",
+                "amount"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "travel": {
+      "initial_state_sha256": "5c77c5fee98ee239db2a9a231a7b402f57fd60492dbf55f2d6983bb29ae46c34",
+      "tool_contract_sha256": "e587d7c6e5a09056eddf714b454f8c4450b1872b8f2747ab5241c3f6ac61cb5c",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "book_car",
+            "description": "Book a rental car in a given city",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "city": {
+                  "type": "string"
+                },
+                "car_type": {
+                  "type": "string",
+                  "default": "economy"
+                }
+              },
+              "required": [
+                "city"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "book_flight",
+            "description": "Book a flight for a passenger",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "flight_id": {
+                  "type": "string"
+                },
+                "passenger_name": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "flight_id",
+                "passenger_name"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "confirm_booking",
+            "description": "Confirm a pending booking",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "booking_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "booking_id"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "create_hotel_booking",
+            "description": "Create a hotel booking for a guest",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "hotel_id": {
+                  "type": "string"
+                },
+                "guest_name": {
+                  "type": "string"
+                },
+                "nights": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "hotel_id",
+                "guest_name",
+                "nights"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "generate_schedule",
+            "description": "Generate a personalized day schedule for a guest",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "guest_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "guest_id"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "get_current_weather",
+            "description": "Get the current weather for a city",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "city": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "city"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "get_guest_reservation",
+            "description": "Look up a guest's reservation and profile",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "guest_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "guest_id"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "get_hotel",
+            "description": "Look up a hotel by ID",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "hotel_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "hotel_id"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "get_weather_alert",
+            "description": "Get any active weather alert for a city",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "city": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "city"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "get_weather_forecast",
+            "description": "Get a multi-day weather forecast for a city",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "city": {
+                  "type": "string"
+                },
+                "days": {
+                  "type": "integer",
+                  "default": 3
+                }
+              },
+              "required": [
+                "city"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "search_flights",
+            "description": "Search flights between an origin and destination",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "origin": {
+                  "type": "string"
+                },
+                "destination": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "origin",
+                "destination"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "search_hotels",
+            "description": "Search hotels available in a given city",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "city": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "city"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "send_itinerary",
+            "description": "Send a trip itinerary to a guest's email",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "booking_reference": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "booking_reference",
+                "email"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "onboarding": {
+      "initial_state_sha256": "a2db64603944218f6f1cfae30f918875d85360c3f492eadd646d6684ca77af1b",
+      "tool_contract_sha256": "9d6bc00afb96a5bba48735147543521e0c416f5a378256ff7091233a68ed2cca",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "add_task",
+            "description": "Add a task to a task list, creating the list if needed",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "list_id": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "list_id",
+                "title"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "calculate_task_stats",
+            "description": "Calculate completion stats for a task list",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "list_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "list_id"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "complete_task",
+            "description": "Mark a task as complete by task ID",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "task_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "task_id"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "configure_account_settings",
+            "description": "Configure account settings (plan) for a customer account",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "account_id": {
+                  "type": "string"
+                },
+                "plan": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "account_id",
+                "plan"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "create_customer_account",
+            "description": "Create a new customer account",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name",
+                "email"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "finalize_onboarding",
+            "description": "Finalize onboarding for a customer account",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "account_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "account_id"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "list_tasks",
+            "description": "List all tasks in a task list",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "list_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "list_id"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "send_verification_email",
+            "description": "Send a verification email and mark the account verified",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "account_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "account_id"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "sales": {
+      "initial_state_sha256": "48442e665b933022d31f398616de500d6ea8431fb7fbffa1c7472255cd25f9ce",
+      "tool_contract_sha256": "6f9ac109a183e119f89fe1e16514a5a1f97e634db127c8bd5a1fe3edc3fb2597",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "DraftWarrantyExtensionConfirmationEmail",
+            "description": "Draft a warranty extension confirmation email for a person account",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "email"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "MCA_Create_Lead_record",
+            "description": "Create a new lead record with first name, last name, and email",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "FirstName": {
+                  "type": "string"
+                },
+                "LastName": {
+                  "type": "string"
+                },
+                "Email": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "FirstName",
+                "LastName",
+                "Email"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "MCA_Update_Lead_Status",
+            "description": "Update the status of a lead record by email",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "Email": {
+                  "type": "string"
+                },
+                "LeadStatus": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "Email",
+                "LeadStatus"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "SDR_Create_Opportunity_New",
+            "description": "Create a new opportunity record for a person account interested in warranty extension",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "AccountName": {
+                  "type": "string"
+                },
+                "accountId": {
+                  "type": "string",
+                  "default": ""
+                }
+              },
+              "required": [
+                "AccountName"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "SDR_Draft_OutReach_Email_for_Account",
+            "description": "Draft an outreach email for a person account regarding warranty expiration",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "email"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "SDR_Get_Product_Details",
+            "description": "Get product details and availability information",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "productName": {
+                  "type": "string",
+                  "default": ""
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "SDR_Schedule_Email",
+            "description": "Schedule a drafted email for sending at an optimal engagement time",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "recipient_email": {
+                  "type": "string"
+                },
+                "subject": {
+                  "type": "string",
+                  "default": ""
+                }
+              },
+              "required": [
+                "recipient_email"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "SDR_Update_Lead_Interest",
+            "description": "Update the lead interest field based on their email response content",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "TargetID": {
+                  "type": "string"
+                },
+                "EmailResponse": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "TargetID",
+                "EmailResponse"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "SDR_Update_Warranty_Status_to_About_to_Expire",
+            "description": "Update a person account's warranty status to 'About to Expire'",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "email"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "Sales_SDR_Draft_Initial_Outreach_Email_With_Products",
+            "description": "Draft an initial outreach email for a lead with personalized product information",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "lead_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "lead_id"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "Sales_SDR_Opt_Out_Target_Rating_as_Cold",
+            "description": "Opt out a lead by setting their rating to Cold",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "leadId": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "leadId"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "marketing": {
+      "initial_state_sha256": "d56bd613ac38d6b9471aa70ad8a179395d0d35c7ea5060929fbc9a00d86ae5fa",
+      "tool_contract_sha256": "3e7b3d95a0c04b2a99b1c8c31293686a97ce0cd7a44202405e819d62768b5506",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "MA_Create_A_Campaign_With_Most_or_Least_Engaged_Customers",
+            "description": "Create a campaign targeting most or least engaged customers",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "campaignId": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                },
+                "inputCampaignName": {
+                  "type": "string"
+                },
+                "inputDescription": {
+                  "type": "string"
+                },
+                "inputStartDate": {
+                  "type": "string"
+                },
+                "inputEndDate": {
+                  "type": "string"
+                },
+                "Type": {
+                  "type": "string",
+                  "default": "Most"
+                }
+              },
+              "required": [
+                "campaignId",
+                "email",
+                "inputCampaignName",
+                "inputDescription",
+                "inputStartDate",
+                "inputEndDate"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "MA_Get_CTR_Of_A_Campaign",
+            "description": "Get the click-through rate (CTR) of a campaign",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "campaignId": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "campaignId",
+                "email"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "MA_Get_Campaign_With_Best_CTR",
+            "description": "Get the campaign with the best CTR for a marketing user",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "email"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "MA_Get_Campaign_With_High_Impression",
+            "description": "Get the campaign with the highest impressions for a marketing user",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "email"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "MA_Get_Campaign_With_Least_Impression",
+            "description": "Get the campaign with the least impressions for a marketing user",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "email"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "MA_Get_Campaign_With_Worst_CTR",
+            "description": "Get the campaign with the worst CTR for a marketing user",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "email"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "MA_Get_Customer_List_Based_On_Top_Open",
+            "description": "Get the list of customers with the highest number of opens for a campaign",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "campaignId": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "campaignId",
+                "email"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "MA_Get_Most_or_Least_Engaged_Customer_List",
+            "description": "Get the list of most or least engaged customers for a campaign",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "Type": {
+                  "type": "string"
+                },
+                "campaignId": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "Type",
+                "campaignId",
+                "email"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "MA_Get_ROI_A_Of_Campaign",
+            "description": "Get the ROI of a campaign based on campaign ID",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "campaignId": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "campaignId",
+                "email"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "MA_Get_Total_Expense_Quarter",
+            "description": "Get the total marketing expense for a quarter",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "Email": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "Email"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

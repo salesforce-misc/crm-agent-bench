@@ -1,0 +1,10 @@
+crm-agent-bench
+Copyright (c) 2026 Salesforce, Inc.
+
+This product is licensed under the Apache License, Version 2.0 (see LICENSE.txt).
+
+This product includes software developed by third parties:
+
+- Apache Burr (https://burr.dagworks.io/), licensed under the Apache License,
+  Version 2.0. The per-node ReAct loop is implemented as an Apache Burr state
+  machine.

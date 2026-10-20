@@ -1,0 +1,78 @@
+schema_version: 3
+benchmark_version: 2.6.0
+dataset_version: 1.5.0
+status: frozen
+lock_file: benchmark/benchmark.lock.json
+task_set: base
+task_count: 555
+domains:
+  retail:
+    tasks: src/tasks/retail.yaml
+    reference_agent: src/agents/retail.yaml
+    policy: src/tasks/policies/retail_policy.md
+  customer_support:
+    tasks: src/tasks/customer_support.yaml
+    reference_agent: src/agents/customer_support.yaml
+    policy: src/tasks/policies/customer_support_policy.md
+  field_service:
+    tasks: src/tasks/field_service.yaml
+    reference_agent: src/agents/field_service.yaml
+    policy: src/tasks/policies/field_service_policy.md
+  itsm:
+    tasks: src/tasks/itsm.yaml
+    reference_agent: src/agents/itsm.yaml
+    policy: src/tasks/policies/itsm_policy.md
+  payments:
+    tasks: src/tasks/payments.yaml
+    reference_agent: src/agents/payments.yaml
+    policy: src/tasks/policies/payments_policy.md
+  travel:
+    tasks: src/tasks/travel.yaml
+    reference_agent: src/agents/travel.yaml
+    policy: src/tasks/policies/travel_policy.md
+  onboarding:
+    tasks: src/tasks/onboarding.yaml
+    reference_agent: src/agents/onboarding.yaml
+    policy: src/tasks/policies/onboarding_policy.md
+  sales:
+    tasks: src/tasks/sales.yaml
+    reference_agent: src/agents/sales.yaml
+    policy: src/tasks/policies/sales_policy.md
+  marketing:
+    tasks: src/tasks/marketing.yaml
+    reference_agent: src/agents/marketing.yaml
+    policy: src/tasks/policies/marketing_policy.md
+# `.env` values take precedence over these shared executor defaults.
+executor:
+  max_turns: 30
+  trials: 1
+  base_seed: 20260918
+  task_timeout_seconds: 1200
+  agent:
+    provider: litellm
+    model: gpt-4o
+    temperature: 0.0
+    max_tokens: 16384
+    reasoning_effort: low
+    step_timeout_seconds: 240
+    bedrock_compat: false
+    use_burr: true
+  user_simulator:
+    strategy: react
+    provider: litellm
+    model: gpt-5-mini
+    temperature: 0.0
+    max_tokens: 1086
+    reasoning_effort: low
+    step_timeout_seconds: 90
+    max_message_chars: 4000
+  semantic_judge:
+    provider: litellm
+    model: gpt-5-mini
+    temperature: 0.0
+    max_tokens: 16384
+    max_attempts: 3
+    reasoning_effort: low
+    cache_enabled: true
+    cache_dir: bench_output/judge_cache
+    prompt_version: semantic-communication-v6

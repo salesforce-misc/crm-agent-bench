@@ -1,0 +1,57 @@
+# Commerce Agent Smoke Test — 3 quick tasks for validation.
+#
+# Usage:
+#   python -m harness.bench_runner \
+#     --tasks tests/fixtures/tasks/eval_commerce_graph_smoke_test.yaml \
+#     --config src/agents/retail.yaml
+
+tasks:
+- id: smoke_commerce_product_qa_01
+  instruction: 'You want to know the price of the product with ID PROD-1001. Ask the
+
+    agent directly for its price. When the agent tells you the price,
+
+    end the conversation.
+
+    '
+  expected_actions:
+  - get_product
+  domain: retail
+  expected_args:
+    get_product:
+      product_id: PROD-1001
+  expected_response_semantic:
+  - "The assistant must report the product price as 249.99 dollars."
+- id: smoke_commerce_product_qa_02
+  instruction: 'You have product code PROD-1002 written down from a flyer and want to
+
+    know what it is and how much it costs. Ask the agent to look it up.
+
+    When the agent tells you the name and price, end the conversation.
+
+    '
+  expected_actions:
+  - get_product
+  domain: retail
+  expected_args:
+    get_product:
+      product_id: PROD-1002
+  expected_response_semantic:
+  - "The assistant must identify PROD-1002 as the Smart Fitness Watch."
+  - "The assistant must report the product price as 179.99 dollars."
+- id: smoke_commerce_product_qa_03
+  instruction: 'You want to know if the product with ID PROD-1003 is currently in
+
+    stock before you drive to the store. Ask the agent to check.
+
+    When the agent tells you whether it''s in stock, end the conversation.
+
+    '
+  expected_actions:
+  - get_product
+  domain: retail
+  expected_args:
+    get_product:
+      product_id: PROD-1003
+  expected_response_semantic:
+  - "The assistant must clearly state that the requested product is in stock."
