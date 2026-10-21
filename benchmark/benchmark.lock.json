@@ -80,7 +80,7 @@
     "src/tasks/retail.yaml": "cb502a81f160352681c25f0eeac6440d047f178456f9ff198043d54a9b50e2d8",
     "src/tasks/sales.yaml": "fc571a6c66191d74798aab7b3663ee07c8f4cd94add5510a33f05c25379d5aa3",
     "src/tasks/travel.yaml": "7caeb2760c22b481c4df755151c5e0e049c94066049d0ba28f5f3014f01e327f",
-    "uv.lock": "72574e840eae21032af8b2e0c821baa0c37cbee6daa742fd9b7447a27b0691a2"
+    "uv.lock": "c43008e19152f73d1424e99cf5ac6b773b7d82921d802386115eaef298dbb2ca"
   },
   "domains": {
     "retail": {
