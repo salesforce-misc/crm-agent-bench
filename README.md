@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/assets/logo.svg" alt="CRM-Agent-Bench logo" width="88">
+  <a href="https://www.salesforce.com/"><img src="docs/assets/salesforce_logo.svg" alt="Salesforce" width="120"></a>
 </p>
 
 <h1 align="center">CRM-Agent-Bench</h1>
@@ -20,7 +20,7 @@
 
 <p align="center">
   Monojit Banerjee<sup>*</sup>, Zhujun Lan<sup>*</sup>, Defu Cao<sup>*</sup><br>
-  <a href="https://www.salesforce.com/"><img src="docs/assets/salesforce_logo.svg" alt="Salesforce" height="44"></a><br>
+  <b>Salesforce, Inc.</b><br>
   <sub><sup>*</sup>Equal contribution</sub>
 </p>
 
