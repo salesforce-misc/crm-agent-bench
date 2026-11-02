@@ -1,8 +1,80 @@
-# crm-agent-bench
+<p align="center">
+  <img src="docs/assets/logo.svg" alt="CRM-Agent-Bench logo" width="88">
+</p>
 
-Multi-node ReAct agent benchmark with automated evaluation and LLM-powered user
-simulation. The per-node reasoning/tool loop runs on
-[Apache Burr](https://burr.dagworks.io/) — this repo has **no proprietary /
+<h1 align="center">CRM-Agent-Bench</h1>
+
+<p align="center">
+  <b>Benchmarking Tool-Using Agents in Stateful Enterprise Environments</b><br>
+  <i>Where agents meet business rules.</i>
+</p>
+
+<p align="center">
+  <a href="https://arxiv.org/abs/2610.32004"><img src="https://img.shields.io/badge/arXiv-2610.32004-b31b1b.svg" alt="arXiv:2610.32004"></a>
+  <a href="https://huggingface.co/papers/2610.32004"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20Daily%20Paper-2610.32004-ffd21e.svg" alt="Hugging Face Daily Paper"></a>
+  <a href="https://crm-agent-bench.github.io/"><img src="https://img.shields.io/badge/Project-Page-4c6ef5.svg" alt="Project page"></a>
+  <a href="https://github.com/salesforce-misc/crm-agent-bench/actions/workflows/ci.yml"><img src="https://github.com/salesforce-misc/crm-agent-bench/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="LICENSE.txt"><img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" alt="License: Apache-2.0"></a>
+  <img src="https://img.shields.io/badge/Python-3.11%20%7C%203.12-3776ab.svg" alt="Python 3.11 | 3.12">
+</p>
+
+<p align="center">
+  Monojit Banerjee<sup>*</sup>, Zhujun Lan<sup>*</sup>, Defu Cao<sup>*</sup><br>
+  <a href="https://www.salesforce.com/"><img src="docs/assets/salesforce_logo.svg" alt="Salesforce" height="44"></a><br>
+  <sub><sup>*</sup>Equal contribution</sub>
+</p>
+
+<p align="center">
+  <a href="https://arxiv.org/abs/2610.32004">Paper</a> ·
+  <a href="https://huggingface.co/papers/2610.32004">Daily Paper</a> ·
+  <a href="https://crm-agent-bench.github.io/">Project page</a> ·
+  <a href="https://crm-agent-bench.github.io/#results">Interactive leaderboard</a> ·
+  <a href="#citation">Citation</a>
+</p>
+
+## Overview
+
+CRM-Agent-Bench is an execution-grounded benchmark of **555 stateful,
+multi-turn tasks** across **nine business domains** and **36 capability
+tags**. Each task binds a user goal and an initial CRM state to a
+task-specific executable contract drawn from checks over actions, arguments,
+order, response content, target state, and protected state. Strict success is
+the conjunction of every check the task declares, so a persuasive reply cannot
+offset a missing transaction, and a correct endpoint cannot erase a forbidden
+intermediate action. An on-policy simulated user reacts to the agent's visible
+replies, and every trial runs against a freshly reset backend with
+deterministic tools and synthetic records.
+
+<p align="center">
+  <img src="docs/assets/overview.png" alt="CRM-Agent-Bench setup and a multi-turn funds-transfer demo" width="100%">
+</p>
+<p align="center"><sub>
+  <b>(a)</b> An on-policy user interacts with the full routed agent; each turn
+  exposes one scoped capability over a freshly reset CRM backend, and the
+  recorded dialogue, routes, tool calls, and terminal state are checked
+  conjunctively against the task contract. <b>(b)</b> In an observed
+  trajectory, the agent rejects an invalid transfer without changing state,
+  then validates and executes the user's corrected request.
+</sub></p>
+
+**Highlights from the paper**
+
+- Across sixteen evaluated systems, strict success spans **64.32% to 83.60%**.
+  The top eight fall within a 2.88-point band, yet differ sharply in cost and
+  per-domain reliability.
+- For the four systems in the paper's grader-catch analysis, grading only the
+  final reply overstates strict success by **10.5 to 11.0 points**; the action
+  check alone removes 45 to 50 of the 555 tasks.
+- Customer support is the hardest domain (across-model mean **56.35%**), and
+  no model leads every domain.
+- Estimated tested-agent cost spans **89.3×** across the thirteen priced runs,
+  from \$2.14 to \$191.00, and does not track rank.
+
+## Engine
+
+The harness is a multi-node ReAct agent benchmark with automated evaluation and
+LLM-powered user simulation. The per-node reasoning/tool loop runs on
+[Apache Burr](https://burr.dagworks.io/); this repo has **no proprietary /
 vendor agent-runtime dependencies** and installs entirely from public PyPI.
 
 ```
@@ -27,10 +99,8 @@ vendor agent-runtime dependencies** and installs entirely from public PyPI.
               ###STOP###   Response
 ```
 
-## Engine
-
-Each selected graph node runs a ReAct loop — reason with the LLM, execute the
-requested tools, feed results back, repeat — implemented as an explicit Apache
+Each selected graph node runs a ReAct loop (reason with the LLM, execute the
+requested tools, feed results back, repeat), implemented as an explicit Apache
 Burr state machine (`reason → execute_tools → reason … → finish`). See
 `src/harness/agent_burr.py` and `src/harness/graph_agent_burr.py`.
 
@@ -137,7 +207,7 @@ uv run python -m analysis --help
 checks; all 465 response criteria across 402 tasks use the semantic LLM judge.
 The capability-specific recipes are ported from
 [`trailheadapps/agent-script-recipes`](https://github.com/trailheadapps/agent-script-recipes)
-into this harness's native format — see
+into this harness's native format; see
 [`docs/agent-script-recipes-port.md`](docs/agent-script-recipes-port.md). The
 benchmark manifest is authoritative for domain membership. Capabilities remain task
 metadata for filtering and reporting; they are not separate execution suites.
@@ -193,8 +263,8 @@ uv run python -m analysis.usersim_report --prefix bench --timestamp 20260101_120
 
 ## Extending the benchmark
 
-The framework is driven by declarative YAML, so the common cases — a new task
-or a new agent — need no harness changes. Only the harder case (a new stateful
+The framework is driven by declarative YAML, so the common cases (a new task
+or a new agent) need no harness changes. Only the harder case (a new stateful
 tool world) requires Python, and it's a single class.
 
 ### Add a task (YAML, no code)
@@ -312,10 +382,43 @@ A task can then assert the write happened:
 
 See the shipped domains in `src/harness/tools/domains/` for larger examples.
 
+## Leaderboard
+
+All sixteen systems run the same 555-task canonical set with the reference
+graph-routed scaffold, a fixed `gpt-5-mini` user simulator and semantic judge,
+and one execution per task. The chart reproduces the official round-1
+leaderboard from the [paper](https://arxiv.org/abs/2610.32004).
+
+<p align="center">
+  <img src="docs/assets/leaderboard.png" alt="Round-1 strict accuracy for sixteen systems, with estimated tested-agent cost per bar" width="100%">
+</p>
+<p align="center"><sub>
+  Sixteen full-suite runs ranked by strict accuracy, colored by family and
+  marked with their developer logos. Each bar is annotated with its strict
+  accuracy and estimated tested-agent cost (user-simulator and judge usage
+  excluded); n/a marks self-hosted open-weight runs without metered pricing.
+</sub></p>
+
+Explore the three-round results, per-domain success rates, and latency on the
+[interactive leaderboard](https://crm-agent-bench.github.io/#results).
+
 ## Tests
 
 ```bash
 uv run pytest
+```
+
+## Citation
+
+If you use CRM-Agent-Bench in your research, please cite:
+
+```bibtex
+@article{banerjee2026crm,
+  title={CRM-Agent-Bench: Benchmarking Tool-Using Agents in Stateful Enterprise Environments},
+  author={Banerjee, Monojit and Lan, Zhujun and Cao, Defu},
+  journal={arXiv preprint arXiv:2610.32004},
+  year={2026}
+}
 ```
 
 ## Community & contributing
@@ -324,3 +427,5 @@ uv run pytest
 - [Code of Conduct](CODE_OF_CONDUCT.md)
 - [Security policy](SECURITY.md)
 - [License (Apache-2.0)](LICENSE.txt)
+
+Salesforce and the Salesforce logo are trademarks of Salesforce, Inc.
